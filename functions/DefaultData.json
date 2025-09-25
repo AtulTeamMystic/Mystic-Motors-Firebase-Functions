@@ -1,0 +1,2708 @@
+{
+  "profileData": {
+    "username": "",
+    "userId": "",
+    "careerEarning": 0,
+    "totalRace": 0,
+    "isMaintenanceRewardAvailable": false,
+    "game_quality": "Medium",
+    "totalWin": 0,
+    "email": "",
+    "playerCoins": 1000,
+    "playerGem": 50,
+    "playerExperience": 0,
+    "playerLevel": 1,
+    "spellDeck": [],
+    "avatar": {
+      "_id": "",
+      "userId": "",
+      "tierType": "Common",
+      "avatarNumber": 1,
+      "status": true
+    },
+    "selectedCar": "Deimos",
+    "trophyLevel": 0,
+    "trophyHighestLevel": 0,
+    "friendRequestsSent": [],
+    "referralLeft": 5,
+    "isReferralClaimed": false,
+    "referralCode": "",
+    "isVerified": false
+  },
+  "garageData": {
+    "crateData": {
+      "Common": 0,
+      "Rare": 0,
+      "Exotic": 0,
+      "Legendary": 0,
+      "Mythical": 0
+    },
+    "keyData": {
+      "Common": 0,
+      "Rare": 0,
+      "Exotic": 0,
+      "Legendary": 0,
+      "Mythical": 0
+    },
+    "carCosmeticData": {
+      "wheels": "DefaultWheel",
+      "decals": "DefaultDecal",
+      "spoilers": "DefaultSpoiler",
+      "underglow": "DefaultUnderglow",
+      "boost": "DefaultBoost"
+    },
+    "garageItemsData": [
+      {
+        "itemName": "DefaultWheel",
+        "variants": [
+          {
+            "colorName": "",
+            "count": 1
+          }
+        ],
+        "itemType": 0,
+        "itemRarity": 0
+      },
+      {
+        "itemName": "Gamma",
+        "variants": [
+          {
+            "colorName": "Black",
+            "count": 0
+          },
+          {
+            "colorName": "Bronze",
+            "count": 0
+          },
+          {
+            "colorName": "Silver",
+            "count": 0
+          },
+          {
+            "colorName": "Gold",
+            "count": 0
+          },
+          {
+            "colorName": "Platinum",
+            "count": 0
+          }
+        ],
+        "itemType": 0,
+        "itemRarity": 0
+      },
+      {
+        "itemName": "Delta",
+        "variants": [
+          {
+            "colorName": "Black",
+            "count": 0
+          },
+          {
+            "colorName": "Bronze",
+            "count": 0
+          },
+          {
+            "colorName": "Silver",
+            "count": 0
+          },
+          {
+            "colorName": "Gold",
+            "count": 0
+          },
+          {
+            "colorName": "Platinum",
+            "count": 0
+          }
+        ],
+        "itemType": 0,
+        "itemRarity": 0
+      },
+      {
+        "itemName": "Alpha",
+        "variants": [
+          {
+            "colorName": "Black",
+            "count": 0
+          },
+          {
+            "colorName": "Bronze",
+            "count": 0
+          },
+          {
+            "colorName": "Silver",
+            "count": 0
+          },
+          {
+            "colorName": "Gold",
+            "count": 0
+          },
+          {
+            "colorName": "Platinum",
+            "count": 0
+          }
+        ],
+        "itemType": 0,
+        "itemRarity": 0
+      },
+      {
+        "itemName": "Meta",
+        "variants": [
+          {
+            "colorName": "Black",
+            "count": 0
+          },
+          {
+            "colorName": "Bronze",
+            "count": 0
+          },
+          {
+            "colorName": "Silver",
+            "count": 0
+          },
+          {
+            "colorName": "Gold",
+            "count": 0
+          },
+          {
+            "colorName": "Platinum",
+            "count": 0
+          }
+        ],
+        "itemType": 0,
+        "itemRarity": 0
+      },
+      {
+        "itemName": "Holo",
+        "variants": [
+          {
+            "colorName": "White",
+            "count": 0
+          },
+          {
+            "colorName": "Red",
+            "count": 0
+          },
+          {
+            "colorName": "Green",
+            "count": 0
+          },
+          {
+            "colorName": "Blue",
+            "count": 0
+          },
+          {
+            "colorName": "Pink",
+            "count": 0
+          },
+          {
+            "colorName": "Orange",
+            "count": 0
+          },
+          {
+            "colorName": "Purple",
+            "count": 0
+          },
+          {
+            "colorName": "Yellow",
+            "count": 0
+          }
+        ],
+        "itemType": 0,
+        "itemRarity": 3
+      },
+      {
+        "itemName": "Atomic",
+        "variants": [
+          {
+            "colorName": "White",
+            "count": 0
+          },
+          {
+            "colorName": "Red",
+            "count": 0
+          },
+          {
+            "colorName": "Green",
+            "count": 0
+          },
+          {
+            "colorName": "Blue",
+            "count": 0
+          },
+          {
+            "colorName": "Pink",
+            "count": 0
+          },
+          {
+            "colorName": "Orange",
+            "count": 0
+          },
+          {
+            "colorName": "Purple",
+            "count": 0
+          },
+          {
+            "colorName": "Yellow",
+            "count": 0
+          }
+        ],
+        "itemType": 0,
+        "itemRarity": 2
+      },
+      {
+        "itemName": "Flux",
+        "variants": [
+          {
+            "colorName": "White",
+            "count": 0
+          },
+          {
+            "colorName": "Red",
+            "count": 0
+          },
+          {
+            "colorName": "Green",
+            "count": 0
+          },
+          {
+            "colorName": "Blue",
+            "count": 0
+          },
+          {
+            "colorName": "Pink",
+            "count": 0
+          },
+          {
+            "colorName": "Orange",
+            "count": 0
+          },
+          {
+            "colorName": "Purple",
+            "count": 0
+          },
+          {
+            "colorName": "Yellow",
+            "count": 0
+          }
+        ],
+        "itemType": 0,
+        "itemRarity": 1
+      },
+      {
+        "itemName": "Blaze",
+        "variants": [
+          {
+            "colorName": "White",
+            "count": 0
+          },
+          {
+            "colorName": "Red",
+            "count": 0
+          },
+          {
+            "colorName": "Green",
+            "count": 0
+          },
+          {
+            "colorName": "Blue",
+            "count": 0
+          },
+          {
+            "colorName": "Pink",
+            "count": 0
+          },
+          {
+            "colorName": "Orange",
+            "count": 0
+          },
+          {
+            "colorName": "Purple",
+            "count": 0
+          },
+          {
+            "colorName": "Yellow",
+            "count": 0
+          }
+        ],
+        "itemType": 0,
+        "itemRarity": 4
+      },
+      {
+        "itemName": "RazorEdge",
+        "variants": [
+          {
+            "colorName": "White",
+            "count": 0
+          },
+          {
+            "colorName": "Red",
+            "count": 0
+          },
+          {
+            "colorName": "Green",
+            "count": 0
+          },
+          {
+            "colorName": "Blue",
+            "count": 0
+          },
+          {
+            "colorName": "Pink",
+            "count": 0
+          },
+          {
+            "colorName": "Orange",
+            "count": 0
+          },
+          {
+            "colorName": "Purple",
+            "count": 0
+          },
+          {
+            "colorName": "Yellow",
+            "count": 0
+          }
+        ],
+        "itemType": 0,
+        "itemRarity": 1
+      },
+      {
+        "itemName": "RedlinePulse",
+        "variants": [
+          {
+            "colorName": "White",
+            "count": 0
+          },
+          {
+            "colorName": "Red",
+            "count": 0
+          },
+          {
+            "colorName": "Green",
+            "count": 0
+          },
+          {
+            "colorName": "Blue",
+            "count": 0
+          },
+          {
+            "colorName": "Pink",
+            "count": 0
+          },
+          {
+            "colorName": "Orange",
+            "count": 0
+          },
+          {
+            "colorName": "Purple",
+            "count": 0
+          },
+          {
+            "colorName": "Yellow",
+            "count": 0
+          }
+        ],
+        "itemType": 0,
+        "itemRarity": 1
+      },
+      {
+        "itemName": "Vulcan",
+        "variants": [
+          {
+            "colorName": "White",
+            "count": 0
+          },
+          {
+            "colorName": "Red",
+            "count": 0
+          },
+          {
+            "colorName": "Green",
+            "count": 0
+          },
+          {
+            "colorName": "Blue",
+            "count": 0
+          },
+          {
+            "colorName": "Pink",
+            "count": 0
+          },
+          {
+            "colorName": "Orange",
+            "count": 0
+          },
+          {
+            "colorName": "Purple",
+            "count": 0
+          },
+          {
+            "colorName": "Yellow",
+            "count": 0
+          }
+        ],
+        "itemType": 0,
+        "itemRarity": 2
+      },
+      {
+        "itemName": "AquaDrift",
+        "variants": [
+          {
+            "colorName": "White",
+            "count": 0
+          },
+          {
+            "colorName": "Red",
+            "count": 0
+          },
+          {
+            "colorName": "Green",
+            "count": 0
+          },
+          {
+            "colorName": "Blue",
+            "count": 0
+          },
+          {
+            "colorName": "Pink",
+            "count": 0
+          },
+          {
+            "colorName": "Orange",
+            "count": 0
+          },
+          {
+            "colorName": "Purple",
+            "count": 0
+          },
+          {
+            "colorName": "Yellow",
+            "count": 0
+          }
+        ],
+        "itemType": 0,
+        "itemRarity": 4
+      },
+      {
+        "itemName": "CelestialBlade",
+        "variants": [
+          {
+            "colorName": "White",
+            "count": 0
+          },
+          {
+            "colorName": "Red",
+            "count": 0
+          },
+          {
+            "colorName": "Green",
+            "count": 0
+          },
+          {
+            "colorName": "Blue",
+            "count": 0
+          },
+          {
+            "colorName": "Pink",
+            "count": 0
+          },
+          {
+            "colorName": "Orange",
+            "count": 0
+          },
+          {
+            "colorName": "Purple",
+            "count": 0
+          },
+          {
+            "colorName": "Yellow",
+            "count": 0
+          }
+        ],
+        "itemType": 0,
+        "itemRarity": 2
+      },
+      {
+        "itemName": "PlasmaShifter",
+        "variants": [
+          {
+            "colorName": "White",
+            "count": 0
+          },
+          {
+            "colorName": "Red",
+            "count": 0
+          },
+          {
+            "colorName": "Green",
+            "count": 0
+          },
+          {
+            "colorName": "Blue",
+            "count": 0
+          },
+          {
+            "colorName": "Pink",
+            "count": 0
+          },
+          {
+            "colorName": "Orange",
+            "count": 0
+          },
+          {
+            "colorName": "Purple",
+            "count": 0
+          },
+          {
+            "colorName": "Yellow",
+            "count": 0
+          }
+        ],
+        "itemType": 0,
+        "itemRarity": 1
+      },
+      {
+        "itemName": "VoidSpinner",
+        "variants": [
+          {
+            "colorName": "White",
+            "count": 0
+          },
+          {
+            "colorName": "Red",
+            "count": 0
+          },
+          {
+            "colorName": "Green",
+            "count": 0
+          },
+          {
+            "colorName": "Blue",
+            "count": 0
+          },
+          {
+            "colorName": "Pink",
+            "count": 0
+          },
+          {
+            "colorName": "Orange",
+            "count": 0
+          },
+          {
+            "colorName": "Purple",
+            "count": 0
+          },
+          {
+            "colorName": "Yellow",
+            "count": 0
+          }
+        ],
+        "itemType": 0,
+        "itemRarity": 3
+      },
+      {
+        "itemName": "DefaultDecal",
+        "variants": [
+          {
+            "colorName": "",
+            "count": 1
+          }
+        ],
+        "itemType": 1,
+        "itemRarity": 0
+      },
+      {
+        "itemName": "Enamel",
+        "variants": [
+          {
+            "colorName": "Grey",
+            "count": 0
+          },
+          {
+            "colorName": "Black",
+            "count": 0
+          },
+          {
+            "colorName": "Yellow",
+            "count": 0
+          },
+          {
+            "colorName": "Orange",
+            "count": 0
+          },
+          {
+            "colorName": "Green",
+            "count": 0
+          },
+          {
+            "colorName": "Blue",
+            "count": 0
+          },
+          {
+            "colorName": "Purple",
+            "count": 0
+          },
+          {
+            "colorName": "Pink",
+            "count": 0
+          },
+          {
+            "colorName": "Red",
+            "count": 0
+          }
+        ],
+        "itemType": 1,
+        "itemRarity": 0
+      },
+      {
+        "itemName": "Metal",
+        "variants": [
+          {
+            "colorName": "Bronze",
+            "count": 0
+          },
+          {
+            "colorName": "Silver",
+            "count": 0
+          },
+          {
+            "colorName": "Gold",
+            "count": 0
+          },
+          {
+            "colorName": "Platinum",
+            "count": 0
+          }
+        ],
+        "itemType": 1,
+        "itemRarity": 1
+      },
+      {
+        "itemName": "Titan",
+        "variants": [
+          {
+            "colorName": "White",
+            "count": 0
+          },
+          {
+            "colorName": "Red",
+            "count": 0
+          },
+          {
+            "colorName": "Green",
+            "count": 0
+          },
+          {
+            "colorName": "Blue",
+            "count": 0
+          },
+          {
+            "colorName": "Pink",
+            "count": 0
+          },
+          {
+            "colorName": "Orange",
+            "count": 0
+          },
+          {
+            "colorName": "Purple",
+            "count": 0
+          },
+          {
+            "colorName": "Yellow",
+            "count": 0
+          }
+        ],
+        "itemType": 1,
+        "itemRarity": 2
+      },
+      {
+        "itemName": "Recon",
+        "variants": [
+          {
+            "colorName": "White",
+            "count": 0
+          },
+          {
+            "colorName": "Red",
+            "count": 0
+          },
+          {
+            "colorName": "Green",
+            "count": 0
+          },
+          {
+            "colorName": "Blue",
+            "count": 0
+          },
+          {
+            "colorName": "Pink",
+            "count": 0
+          },
+          {
+            "colorName": "Orange",
+            "count": 0
+          },
+          {
+            "colorName": "Purple",
+            "count": 0
+          },
+          {
+            "colorName": "Yellow",
+            "count": 0
+          }
+        ],
+        "itemType": 1,
+        "itemRarity": 2
+      },
+      {
+        "itemName": "TidalWave",
+        "variants": [
+          {
+            "colorName": "White",
+            "count": 0
+          },
+          {
+            "colorName": "Red",
+            "count": 0
+          },
+          {
+            "colorName": "Green",
+            "count": 0
+          },
+          {
+            "colorName": "Blue",
+            "count": 0
+          },
+          {
+            "colorName": "Pink",
+            "count": 0
+          },
+          {
+            "colorName": "Orange",
+            "count": 0
+          },
+          {
+            "colorName": "Purple",
+            "count": 0
+          },
+          {
+            "colorName": "Yellow",
+            "count": 0
+          }
+        ],
+        "itemType": 1,
+        "itemRarity": 2
+      },
+      {
+        "itemName": "Inferno",
+        "variants": [
+          {
+            "colorName": "White",
+            "count": 0
+          },
+          {
+            "colorName": "Red",
+            "count": 0
+          },
+          {
+            "colorName": "Green",
+            "count": 0
+          },
+          {
+            "colorName": "Blue",
+            "count": 0
+          },
+          {
+            "colorName": "Pink",
+            "count": 0
+          },
+          {
+            "colorName": "Orange",
+            "count": 0
+          },
+          {
+            "colorName": "Purple",
+            "count": 0
+          },
+          {
+            "colorName": "Yellow",
+            "count": 0
+          }
+        ],
+        "itemType": 1,
+        "itemRarity": 2
+      },
+      {
+        "itemName": "CosmicRush",
+        "variants": [
+          {
+            "colorName": "White",
+            "count": 0
+          },
+          {
+            "colorName": "Red",
+            "count": 0
+          },
+          {
+            "colorName": "Green",
+            "count": 0
+          },
+          {
+            "colorName": "Blue",
+            "count": 0
+          },
+          {
+            "colorName": "Pink",
+            "count": 0
+          },
+          {
+            "colorName": "Orange",
+            "count": 0
+          },
+          {
+            "colorName": "Purple",
+            "count": 0
+          },
+          {
+            "colorName": "Yellow",
+            "count": 0
+          }
+        ],
+        "itemType": 1,
+        "itemRarity": 3
+      },
+      {
+        "itemName": "Venom",
+        "variants": [
+          {
+            "colorName": "White",
+            "count": 0
+          },
+          {
+            "colorName": "Red",
+            "count": 0
+          },
+          {
+            "colorName": "Green",
+            "count": 0
+          },
+          {
+            "colorName": "Blue",
+            "count": 0
+          },
+          {
+            "colorName": "Pink",
+            "count": 0
+          },
+          {
+            "colorName": "Orange",
+            "count": 0
+          },
+          {
+            "colorName": "Purple",
+            "count": 0
+          },
+          {
+            "colorName": "Yellow",
+            "count": 0
+          }
+        ],
+        "itemType": 1,
+        "itemRarity": 3
+      },
+      {
+        "itemName": "Razorwave",
+        "variants": [
+          {
+            "colorName": "White",
+            "count": 0
+          },
+          {
+            "colorName": "Red",
+            "count": 0
+          },
+          {
+            "colorName": "Green",
+            "count": 0
+          },
+          {
+            "colorName": "Blue",
+            "count": 0
+          },
+          {
+            "colorName": "Pink",
+            "count": 0
+          },
+          {
+            "colorName": "Orange",
+            "count": 0
+          },
+          {
+            "colorName": "Purple",
+            "count": 0
+          },
+          {
+            "colorName": "Yellow",
+            "count": 0
+          }
+        ],
+        "itemType": 1,
+        "itemRarity": 3
+      },
+      {
+        "itemName": "Voltage",
+        "variants": [
+          {
+            "colorName": "White",
+            "count": 0
+          },
+          {
+            "colorName": "Red",
+            "count": 0
+          },
+          {
+            "colorName": "Green",
+            "count": 0
+          },
+          {
+            "colorName": "Blue",
+            "count": 0
+          },
+          {
+            "colorName": "Pink",
+            "count": 0
+          },
+          {
+            "colorName": "Orange",
+            "count": 0
+          },
+          {
+            "colorName": "Purple",
+            "count": 0
+          },
+          {
+            "colorName": "Yellow",
+            "count": 0
+          }
+        ],
+        "itemType": 1,
+        "itemRarity": 3
+      },
+      {
+        "itemName": "Vortex",
+        "variants": [
+          {
+            "colorName": "White",
+            "count": 0
+          },
+          {
+            "colorName": "Red",
+            "count": 0
+          },
+          {
+            "colorName": "Green",
+            "count": 0
+          },
+          {
+            "colorName": "Blue",
+            "count": 0
+          },
+          {
+            "colorName": "Pink",
+            "count": 0
+          },
+          {
+            "colorName": "Orange",
+            "count": 0
+          },
+          {
+            "colorName": "Purple",
+            "count": 0
+          },
+          {
+            "colorName": "Yellow",
+            "count": 0
+          }
+        ],
+        "itemType": 1,
+        "itemRarity": 4
+      },
+      {
+        "itemName": "Hellfire",
+        "variants": [
+          {
+            "colorName": "White",
+            "count": 0
+          },
+          {
+            "colorName": "Red",
+            "count": 0
+          },
+          {
+            "colorName": "Green",
+            "count": 0
+          },
+          {
+            "colorName": "Blue",
+            "count": 0
+          },
+          {
+            "colorName": "Pink",
+            "count": 0
+          },
+          {
+            "colorName": "Orange",
+            "count": 0
+          },
+          {
+            "colorName": "Purple",
+            "count": 0
+          },
+          {
+            "colorName": "Yellow",
+            "count": 0
+          }
+        ],
+        "itemType": 1,
+        "itemRarity": 4
+      },
+      {
+        "itemName": "DefaultSpoiler",
+        "variants": [
+          {
+            "colorName": "",
+            "count": 1
+          }
+        ],
+        "itemType": 2,
+        "itemRarity": 0
+      },
+      {
+        "itemName": "JetStream",
+        "variants": [
+          {
+            "colorName": "White",
+            "count": 0
+          },
+          {
+            "colorName": "Red",
+            "count": 0
+          },
+          {
+            "colorName": "Green",
+            "count": 0
+          },
+          {
+            "colorName": "Blue",
+            "count": 0
+          },
+          {
+            "colorName": "Pink",
+            "count": 0
+          },
+          {
+            "colorName": "Orange",
+            "count": 0
+          },
+          {
+            "colorName": "Purple",
+            "count": 0
+          },
+          {
+            "colorName": "Yellow",
+            "count": 0
+          }
+        ],
+        "itemType": 2,
+        "itemRarity": 0
+      },
+      {
+        "itemName": "SonicEdge",
+        "variants": [
+          {
+            "colorName": "White",
+            "count": 0
+          },
+          {
+            "colorName": "Red",
+            "count": 0
+          },
+          {
+            "colorName": "Green",
+            "count": 0
+          },
+          {
+            "colorName": "Blue",
+            "count": 0
+          },
+          {
+            "colorName": "Pink",
+            "count": 0
+          },
+          {
+            "colorName": "Orange",
+            "count": 0
+          },
+          {
+            "colorName": "Purple",
+            "count": 0
+          },
+          {
+            "colorName": "Yellow",
+            "count": 0
+          }
+        ],
+        "itemType": 2,
+        "itemRarity": 0
+      },
+      {
+        "itemName": "AeroBlade",
+        "variants": [
+          {
+            "colorName": "White",
+            "count": 0
+          },
+          {
+            "colorName": "Red",
+            "count": 0
+          },
+          {
+            "colorName": "Green",
+            "count": 0
+          },
+          {
+            "colorName": "Blue",
+            "count": 0
+          },
+          {
+            "colorName": "Pink",
+            "count": 0
+          },
+          {
+            "colorName": "Orange",
+            "count": 0
+          },
+          {
+            "colorName": "Purple",
+            "count": 0
+          },
+          {
+            "colorName": "Yellow",
+            "count": 0
+          }
+        ],
+        "itemType": 2,
+        "itemRarity": 1
+      },
+      {
+        "itemName": "DragStorm",
+        "variants": [
+          {
+            "colorName": "White",
+            "count": 0
+          },
+          {
+            "colorName": "Red",
+            "count": 0
+          },
+          {
+            "colorName": "Green",
+            "count": 0
+          },
+          {
+            "colorName": "Blue",
+            "count": 0
+          },
+          {
+            "colorName": "Pink",
+            "count": 0
+          },
+          {
+            "colorName": "Orange",
+            "count": 0
+          },
+          {
+            "colorName": "Purple",
+            "count": 0
+          },
+          {
+            "colorName": "Yellow",
+            "count": 0
+          }
+        ],
+        "itemType": 2,
+        "itemRarity": 1
+      },
+      {
+        "itemName": "ApexEdge",
+        "variants": [
+          {
+            "colorName": "White",
+            "count": 0
+          },
+          {
+            "colorName": "Red",
+            "count": 0
+          },
+          {
+            "colorName": "Green",
+            "count": 0
+          },
+          {
+            "colorName": "Blue",
+            "count": 0
+          },
+          {
+            "colorName": "Pink",
+            "count": 0
+          },
+          {
+            "colorName": "Orange",
+            "count": 0
+          },
+          {
+            "colorName": "Purple",
+            "count": 0
+          },
+          {
+            "colorName": "Yellow",
+            "count": 0
+          }
+        ],
+        "itemType": 2,
+        "itemRarity": 2
+      },
+      {
+        "itemName": "NightFang",
+        "variants": [
+          {
+            "colorName": "White",
+            "count": 0
+          },
+          {
+            "colorName": "Red",
+            "count": 0
+          },
+          {
+            "colorName": "Green",
+            "count": 0
+          },
+          {
+            "colorName": "Blue",
+            "count": 0
+          },
+          {
+            "colorName": "Pink",
+            "count": 0
+          },
+          {
+            "colorName": "Orange",
+            "count": 0
+          },
+          {
+            "colorName": "Purple",
+            "count": 0
+          },
+          {
+            "colorName": "Yellow",
+            "count": 0
+          }
+        ],
+        "itemType": 2,
+        "itemRarity": 2
+      },
+      {
+        "itemName": "HyperFin",
+        "variants": [
+          {
+            "colorName": "White",
+            "count": 0
+          },
+          {
+            "colorName": "Red",
+            "count": 0
+          },
+          {
+            "colorName": "Green",
+            "count": 0
+          },
+          {
+            "colorName": "Blue",
+            "count": 0
+          },
+          {
+            "colorName": "Pink",
+            "count": 0
+          },
+          {
+            "colorName": "Orange",
+            "count": 0
+          },
+          {
+            "colorName": "Purple",
+            "count": 0
+          },
+          {
+            "colorName": "Yellow",
+            "count": 0
+          }
+        ],
+        "itemType": 2,
+        "itemRarity": 3
+      },
+      {
+        "itemName": "SkySplitter",
+        "variants": [
+          {
+            "colorName": "White",
+            "count": 0
+          },
+          {
+            "colorName": "Red",
+            "count": 0
+          },
+          {
+            "colorName": "Green",
+            "count": 0
+          },
+          {
+            "colorName": "Blue",
+            "count": 0
+          },
+          {
+            "colorName": "Pink",
+            "count": 0
+          },
+          {
+            "colorName": "Orange",
+            "count": 0
+          },
+          {
+            "colorName": "Purple",
+            "count": 0
+          },
+          {
+            "colorName": "Yellow",
+            "count": 0
+          }
+        ],
+        "itemType": 2,
+        "itemRarity": 3
+      },
+      {
+        "itemName": "StormWing",
+        "variants": [
+          {
+            "colorName": "White",
+            "count": 0
+          },
+          {
+            "colorName": "Red",
+            "count": 0
+          },
+          {
+            "colorName": "Green",
+            "count": 0
+          },
+          {
+            "colorName": "Blue",
+            "count": 0
+          },
+          {
+            "colorName": "Pink",
+            "count": 0
+          },
+          {
+            "colorName": "Orange",
+            "count": 0
+          },
+          {
+            "colorName": "Purple",
+            "count": 0
+          },
+          {
+            "colorName": "Yellow",
+            "count": 0
+          }
+        ],
+        "itemType": 2,
+        "itemRarity": 4
+      },
+      {
+        "itemName": "DefaultGlow",
+        "variants": [
+          {
+            "colorName": "",
+            "count": 1
+          }
+        ],
+        "itemType": 3,
+        "itemRarity": 0
+      },
+      {
+        "itemName": "GenesisGlow",
+        "variants": [
+          {
+            "colorName": "White",
+            "count": 0
+          },
+          {
+            "colorName": "Red",
+            "count": 0
+          },
+          {
+            "colorName": "Green",
+            "count": 0
+          },
+          {
+            "colorName": "Blue",
+            "count": 0
+          }
+        ],
+        "itemType": 3,
+        "itemRarity": 3
+      },
+      {
+        "itemName": "DefaultBoost",
+        "variants": [
+          {
+            "colorName": "",
+            "count": 1
+          }
+        ],
+        "itemType": 4,
+        "itemRarity": 0
+      },
+      {
+        "itemName": "Slipstream",
+        "variants": [
+          {
+            "colorName": "White",
+            "count": 0
+          },
+          {
+            "colorName": "Red",
+            "count": 0
+          },
+          {
+            "colorName": "Green",
+            "count": 0
+          },
+          {
+            "colorName": "Pink",
+            "count": 0
+          },
+          {
+            "colorName": "Orange",
+            "count": 0
+          },
+          {
+            "colorName": "Purple",
+            "count": 0
+          },
+          {
+            "colorName": "Yellow",
+            "count": 0
+          },
+          {
+            "colorName": "Blue",
+            "count": 0
+          }
+        ],
+        "itemType": 4,
+        "itemRarity": 0
+      },
+      {
+        "itemName": "HydroBlast",
+        "variants": [
+          {
+            "colorName": "White",
+            "count": 0
+          },
+          {
+            "colorName": "Red",
+            "count": 0
+          },
+          {
+            "colorName": "Green",
+            "count": 0
+          },
+          {
+            "colorName": "Pink",
+            "count": 0
+          },
+          {
+            "colorName": "Orange",
+            "count": 0
+          },
+          {
+            "colorName": "Purple",
+            "count": 0
+          },
+          {
+            "colorName": "Yellow",
+            "count": 0
+          },
+          {
+            "colorName": "Blue",
+            "count": 0
+          }
+        ],
+        "itemType": 4,
+        "itemRarity": 0
+      },
+      {
+        "itemName": "ArcticFury",
+        "variants": [
+          {
+            "colorName": "White",
+            "count": 0
+          },
+          {
+            "colorName": "Red",
+            "count": 0
+          },
+          {
+            "colorName": "Green",
+            "count": 0
+          },
+          {
+            "colorName": "Pink",
+            "count": 0
+          },
+          {
+            "colorName": "Orange",
+            "count": 0
+          },
+          {
+            "colorName": "Purple",
+            "count": 0
+          },
+          {
+            "colorName": "Yellow",
+            "count": 0
+          },
+          {
+            "colorName": "Blue",
+            "count": 0
+          }
+        ],
+        "itemType": 4,
+        "itemRarity": 1
+      },
+      {
+        "itemName": "RockSlinger",
+        "variants": [
+          {
+            "colorName": "White",
+            "count": 0
+          },
+          {
+            "colorName": "Red",
+            "count": 0
+          },
+          {
+            "colorName": "Green",
+            "count": 0
+          },
+          {
+            "colorName": "Pink",
+            "count": 0
+          },
+          {
+            "colorName": "Orange",
+            "count": 0
+          },
+          {
+            "colorName": "Purple",
+            "count": 0
+          },
+          {
+            "colorName": "Yellow",
+            "count": 0
+          },
+          {
+            "colorName": "Blue",
+            "count": 0
+          }
+        ],
+        "itemType": 4,
+        "itemRarity": 1
+      },
+      {
+        "itemName": "HyperCharge",
+        "variants": [
+          {
+            "colorName": "White",
+            "count": 0
+          },
+          {
+            "colorName": "Red",
+            "count": 0
+          },
+          {
+            "colorName": "Green",
+            "count": 0
+          },
+          {
+            "colorName": "Pink",
+            "count": 0
+          },
+          {
+            "colorName": "Orange",
+            "count": 0
+          },
+          {
+            "colorName": "Purple",
+            "count": 0
+          },
+          {
+            "colorName": "Yellow",
+            "count": 0
+          },
+          {
+            "colorName": "Blue",
+            "count": 0
+          }
+        ],
+        "itemType": 4,
+        "itemRarity": 2
+      },
+      {
+        "itemName": "SmokeShow",
+        "variants": [
+          {
+            "colorName": "White",
+            "count": 0
+          },
+          {
+            "colorName": "Red",
+            "count": 0
+          },
+          {
+            "colorName": "Green",
+            "count": 0
+          },
+          {
+            "colorName": "Pink",
+            "count": 0
+          },
+          {
+            "colorName": "Orange",
+            "count": 0
+          },
+          {
+            "colorName": "Purple",
+            "count": 0
+          },
+          {
+            "colorName": "Yellow",
+            "count": 0
+          },
+          {
+            "colorName": "Blue",
+            "count": 0
+          }
+        ],
+        "itemType": 4,
+        "itemRarity": 2
+      },
+      {
+        "itemName": "IceBreaker",
+        "variants": [
+          {
+            "colorName": "White",
+            "count": 0
+          },
+          {
+            "colorName": "Red",
+            "count": 0
+          },
+          {
+            "colorName": "Green",
+            "count": 0
+          },
+          {
+            "colorName": "Pink",
+            "count": 0
+          },
+          {
+            "colorName": "Orange",
+            "count": 0
+          },
+          {
+            "colorName": "Purple",
+            "count": 0
+          },
+          {
+            "colorName": "Yellow",
+            "count": 0
+          },
+          {
+            "colorName": "Blue",
+            "count": 0
+          }
+        ],
+        "itemType": 4,
+        "itemRarity": 3
+      },
+      {
+        "itemName": "PlasmaRush",
+        "variants": [
+          {
+            "colorName": "White",
+            "count": 0
+          },
+          {
+            "colorName": "Red",
+            "count": 0
+          },
+          {
+            "colorName": "Green",
+            "count": 0
+          },
+          {
+            "colorName": "Pink",
+            "count": 0
+          },
+          {
+            "colorName": "Orange",
+            "count": 0
+          },
+          {
+            "colorName": "Purple",
+            "count": 0
+          },
+          {
+            "colorName": "Yellow",
+            "count": 0
+          },
+          {
+            "colorName": "Blue",
+            "count": 0
+          }
+        ],
+        "itemType": 4,
+        "itemRarity": 3
+      },
+      {
+        "itemName": "ArcaneRift",
+        "variants": [
+          {
+            "colorName": "White",
+            "count": 0
+          },
+          {
+            "colorName": "Red",
+            "count": 0
+          },
+          {
+            "colorName": "Green",
+            "count": 0
+          },
+          {
+            "colorName": "Pink",
+            "count": 0
+          },
+          {
+            "colorName": "Orange",
+            "count": 0
+          },
+          {
+            "colorName": "Purple",
+            "count": 0
+          },
+          {
+            "colorName": "Yellow",
+            "count": 0
+          },
+          {
+            "colorName": "Blue",
+            "count": 0
+          }
+        ],
+        "itemType": 4,
+        "itemRarity": 4
+      },
+      {
+        "itemName": "ThunderStream",
+        "variants": [
+          {
+            "colorName": "White",
+            "count": 0
+          },
+          {
+            "colorName": "Red",
+            "count": 0
+          },
+          {
+            "colorName": "Green",
+            "count": 0
+          },
+          {
+            "colorName": "Pink",
+            "count": 0
+          },
+          {
+            "colorName": "Orange",
+            "count": 0
+          },
+          {
+            "colorName": "Purple",
+            "count": 0
+          },
+          {
+            "colorName": "Yellow",
+            "count": 0
+          },
+          {
+            "colorName": "Blue",
+            "count": 0
+          }
+        ],
+        "itemType": 4,
+        "itemRarity": 4
+      }
+    ],
+    "carsData": []
+  },
+  "socialData": {
+    "username": "",
+    "userId": "",
+    "playerLevel": 1,
+    "trophyLevel": 0,
+    "avatar": {
+      "_id": "",
+      "userId": "",
+      "tierType": "Common",
+      "avatarNumber": 1,
+      "status": true
+    },
+    "clanName": "",
+    "badge": "",
+    "friends": [],
+    "friendRequests": []
+  },
+  "mapData": {
+    "mapStats": [
+      {
+        "levelName": "0",
+        "stars": 0
+      },
+      {
+        "levelName": "1",
+        "stars": 0
+      },
+      {
+        "levelName": "2",
+        "stars": 0
+      },
+      {
+        "levelName": "3",
+        "stars": 0
+      },
+      {
+        "levelName": "4",
+        "stars": 0
+      },
+      {
+        "levelName": "5",
+        "stars": 0
+      },
+      {
+        "levelName": "6",
+        "stars": 0
+      },
+      {
+        "levelName": "7",
+        "stars": 0
+      },
+      {
+        "levelName": "8",
+        "stars": 0
+      },
+      {
+        "levelName": "9",
+        "stars": 0
+      },
+      {
+        "levelName": "10",
+        "stars": 0
+      },
+      {
+        "levelName": "11",
+        "stars": 0
+      },
+      {
+        "levelName": "12",
+        "stars": 0
+      },
+      {
+        "levelName": "13",
+        "stars": 0
+      },
+      {
+        "levelName": "14",
+        "stars": 0
+      },
+      {
+        "levelName": "15",
+        "stars": 0
+      },
+      {
+        "levelName": "16",
+        "stars": 0
+      },
+      {
+        "levelName": "17",
+        "stars": 0
+      },
+      {
+        "levelName": "18",
+        "stars": 0
+      },
+      {
+        "levelName": "19",
+        "stars": 0
+      },
+      {
+        "levelName": "20",
+        "stars": 0
+      },
+      {
+        "levelName": "21",
+        "stars": 0
+      },
+      {
+        "levelName": "22",
+        "stars": 0
+      },
+      {
+        "levelName": "23",
+        "stars": 0
+      },
+      {
+        "levelName": "24",
+        "stars": 0
+      }
+    ]
+  },
+  "referralData": {
+    "referredUsers": []
+  },
+  "dailyRewardsData": {
+    "currentDay": 1,
+    "lastClaimDay": 0,
+    "lastClaimTime": "17/06/2025 9:55:15 AM"
+  },
+  "offersData": {
+    "offers": [
+      {
+        "OfferName": "Starter Offer",
+        "offerType": 0,
+        "OfferId": "offer_1",
+        "Items": [
+          {
+            "ItemName": "Gems",
+            "Quantity": 300,
+            "Price": 3.00
+          },
+          {
+            "ItemName": "Legendary Crate",
+            "Quantity": 1,
+            "Price": 3.00
+          },
+          {
+            "ItemName": "Legendary Key",
+            "Quantity": 1,
+            "Price": 3.00
+          },
+          {
+            "ItemName": "Rare Crate",
+            "Quantity": 1,
+            "Price": 1.00
+          },
+          {
+            "ItemName": "Rare Key",
+            "Quantity": 1,
+            "Price": 1.00
+          }
+        ],
+        "OldPrice": 11.00,
+        "NewPrice": 0.99,
+        "ExpirationTimestamp": 1755472800000,
+        "ValidityHours": 48
+      },
+      {
+        "OfferName": "Daily Offer I",
+        "offerType": 1,
+        "OfferId": "offer_2",
+        "Items": [
+          {
+            "ItemName": "Gems",
+            "Quantity": 300,
+            "Price": 3.00
+          },
+          {
+            "ItemName": "Rare Crate",
+            "Quantity": 1,
+            "Price": 1.00
+          },
+          {
+            "ItemName": "Rare Key",
+            "Quantity": 1,
+            "Price": 1.00
+          },
+          {
+            "ItemName": "Exotic Crate",
+            "Quantity": 1,
+            "Price": 1.75
+          },
+          {
+            "ItemName": "Exotic Key",
+            "Quantity": 1,
+            "Price": 1.75
+          },
+          {
+            "ItemName": "Coin Boost",
+            "Quantity": 1,
+            "Price": 1.00
+          },
+          {
+            "ItemName": "Exp Boost",
+            "Quantity": 1,
+            "Price": 1.00
+          }
+        ],
+        "OldPrice": 10.00,
+        "NewPrice": 0.99,
+        "ExpirationTimestamp": 1755386400000,
+        "ValidityHours": 24
+      },
+      {
+        "OfferName": "Daily Offer II",
+        "offerType": 2,
+        "OfferId": "offer_3",
+        "Items": [
+          {
+            "ItemName": "Gems",
+            "Quantity": 250,
+            "Price": 2.50
+          },
+          {
+            "ItemName": "Legendary Crate",
+            "Quantity": 1,
+            "Price": 3.00
+          },
+          {
+            "ItemName": "Legendary Key",
+            "Quantity": 1,
+            "Price": 3.00
+          },
+          {
+            "ItemName": "Rare Crate",
+            "Quantity": 1,
+            "Price": 1.00
+          },
+          {
+            "ItemName": "Rare Key",
+            "Quantity": 1,
+            "Price": 1.00
+          },
+          {
+            "ItemName": "Exotic Crate",
+            "Quantity": 1,
+            "Price": 1.75
+          },
+          {
+            "ItemName": "Exotic Key",
+            "Quantity": 1,
+            "Price": 1.00
+          },
+          {
+            "ItemName": "Coin Boost",
+            "Quantity": 1,
+            "Price": 1.00
+          },
+          {
+            "ItemName": "Exp Boost",
+            "Quantity": 1,
+            "Price": 1.00
+          }
+        ],
+        "OldPrice": 16.00,
+        "NewPrice": 1.99,
+        "ExpirationTimestamp": 1755386400000,
+        "ValidityHours": 24
+      },
+      {
+        "OfferName": "Daily Offer III",
+        "offerType": 3,
+        "OfferId": "offer_4",
+        "Items": [
+          {
+            "ItemName": "Gems",
+            "Quantity": 350,
+            "Price": 3.50
+          },
+          {
+            "ItemName": "Mythical Crate",
+            "Quantity": 1,
+            "Price": 5.00
+          },
+          {
+            "ItemName": "Mythical Key",
+            "Quantity": 1,
+            "Price": 5.00
+          },
+          {
+            "ItemName": "Rare Crate",
+            "Quantity": 1,
+            "Price": 1.00
+          },
+          {
+            "ItemName": "Rare Key",
+            "Quantity": 1,
+            "Price": 1.00
+          },
+          {
+            "ItemName": "Exotic Crate",
+            "Quantity": 1,
+            "Price": 1.75
+          },
+          {
+            "ItemName": "Exotic Key",
+            "Quantity": 1,
+            "Price": 1.75
+          },
+          {
+            "ItemName": "Coin Boost",
+            "Quantity": 1,
+            "Price": 1.00
+          },
+          {
+            "ItemName": "Exp Boost",
+            "Quantity": 1,
+            "Price": 1.00
+          }
+        ],
+        "OldPrice": 21.00,
+        "NewPrice": 2.99,
+        "ExpirationTimestamp": 1755386400000,
+        "ValidityHours": 24
+      },
+      {
+        "OfferName": "Daily Offer IV",
+        "offerType": 4,
+        "OfferId": "offer_13",
+        "Items": [
+          {
+            "ItemName": "Mythical Crate",
+            "Quantity": 1,
+            "Price": 5.00
+          },
+          {
+            "ItemName": "Mythical Key",
+            "Quantity": 1,
+            "Price": 5.00
+          },
+          {
+            "ItemName": "Rare Crate",
+            "Quantity": 1,
+            "Price": 1.00
+          },
+          {
+            "ItemName": "Rare Key",
+            "Quantity": 1,
+            "Price": 1.00
+          },
+          {
+            "ItemName": "Exotic Crate",
+            "Quantity": 1,
+            "Price": 1.75
+          },
+          {
+            "ItemName": "Exotic Key",
+            "Quantity": 1,
+            "Price": 1.75
+          },
+          {
+            "ItemName": "Legendary Crate",
+            "Quantity": 1,
+            "Price": 3.00
+          },
+          {
+            "ItemName": "Legendary Key",
+            "Quantity": 1,
+            "Price": 3.00
+          },
+          {
+            "ItemName": "Coin Boost",
+            "Quantity": 1,
+            "Price": 1.00
+          },
+          {
+            "ItemName": "Exp Boost",
+            "Quantity": 1,
+            "Price": 1.00
+          }
+        ],
+        "OldPrice": 21.00,
+        "NewPrice": 1.49,
+        "ExpirationTimestamp": 1755386400000,
+        "ValidityHours": 24
+      },
+      {
+        "OfferName": "Gold Surge",
+        "offerType": 5,
+        "OfferId": "offer_5",
+        "Items": [
+          {
+            "ItemName": "Gems",
+            "Quantity": 2250,
+            "Price": 24.50
+          },
+          {
+            "ItemName": "Rare Crate",
+            "Quantity": 1,
+            "Price": 1.00
+          },
+          {
+            "ItemName": "Rare Key",
+            "Quantity": 1,
+            "Price": 1.00
+          },
+          {
+            "ItemName": "Exotic Crate",
+            "Quantity": 1,
+            "Price": 1.75
+          },
+          {
+            "ItemName": "Exotic Key",
+            "Quantity": 1,
+            "Price": 1.75
+          },
+          {
+            "ItemName": "Legendary Crate",
+            "Quantity": 1,
+            "Price": 3.00
+          },
+          {
+            "ItemName": "Legendary Key",
+            "Quantity": 1,
+            "Price": 3.00
+          },
+          {
+            "ItemName": "Coin Boost",
+            "Quantity": 1,
+            "Price": 1.00
+          },
+          {
+            "ItemName": "Exp Boost",
+            "Quantity": 1,
+            "Price": 1.00
+          }
+        ],
+        "OldPrice": 35.00,
+        "NewPrice": 4.99,
+        "ExpirationTimestamp": 1755386400000,
+        "ValidityHours": 24
+      },
+      {
+        "OfferName": "Gemstreem",
+        "offerType": 6,
+        "OfferId": "offer_6",
+        "Items": [
+          {
+            "ItemName": "Gems",
+            "Quantity": 2650,
+            "Price": 26.50
+          },
+          {
+            "ItemName": "Mythical Crate",
+            "Quantity": 1,
+            "Price": 5.00
+          },
+          {
+            "ItemName": "Mythical Key",
+            "Quantity": 1,
+            "Price": 5.00
+          },
+          {
+            "ItemName": "Rare Crate",
+            "Quantity": 1,
+            "Price": 1.00
+          },
+          {
+            "ItemName": "Rare Key",
+            "Quantity": 1,
+            "Price": 1.00
+          },
+          {
+            "ItemName": "Exotic Crate",
+            "Quantity": 1,
+            "Price": 1.75
+          },
+          {
+            "ItemName": "Exotic Key",
+            "Quantity": 1,
+            "Price": 1.75
+          },
+          {
+            "ItemName": "Legendary Crate",
+            "Quantity": 1,
+            "Price": 3.00
+          },
+          {
+            "ItemName": "Legendary Key",
+            "Quantity": 1,
+            "Price": 3.00
+          },
+          {
+            "ItemName": "Coin Boost",
+            "Quantity": 1,
+            "Price": 1.00
+          },
+          {
+            "ItemName": "Exp Boost",
+            "Quantity": 1,
+            "Price": 1.00
+          }
+        ],
+        "OldPrice": 50.00,
+        "NewPrice": 9.99,
+        "ExpirationTimestamp": 1755386400000,
+        "ValidityHours": 24
+      },
+      {
+        "OfferName": "Fortune",
+        "offerType": 7,
+        "OfferId": "offer_7",
+        "Items": [
+          {
+            "ItemName": "Gems",
+            "Quantity": 3300,
+            "Price": 33.00
+          },
+          {
+            "ItemName": "Mythical Crate",
+            "Quantity": 2,
+            "Price": 5.00
+          },
+          {
+            "ItemName": "Mythical Key",
+            "Quantity": 2,
+            "Price": 5.00
+          },
+          {
+            "ItemName": "Rare Crate",
+            "Quantity": 2,
+            "Price": 1.00
+          },
+          {
+            "ItemName": "Rare Key",
+            "Quantity": 2,
+            "Price": 1.00
+          },
+          {
+            "ItemName": "Exotic Crate",
+            "Quantity": 2,
+            "Price": 1.75
+          },
+          {
+            "ItemName": "Exotic Key",
+            "Quantity": 2,
+            "Price": 1.75
+          },
+          {
+            "ItemName": "Legendary Crate",
+            "Quantity": 2,
+            "Price": 3.00
+          },
+          {
+            "ItemName": "Legendary Key",
+            "Quantity": 2,
+            "Price": 3.00
+          },
+          {
+            "ItemName": "Coin Boost",
+            "Quantity": 2,
+            "Price": 1.00
+          },
+          {
+            "ItemName": "Exp Boost",
+            "Quantity": 2,
+            "Price": 1.00
+          }
+        ],
+        "OldPrice": 80.00,
+        "NewPrice": 19.99,
+        "ExpirationTimestamp": 1755386400000,
+        "ValidityHours": 24
+      },
+      {
+        "OfferName": "Treasure",
+        "offerType": 8,
+        "OfferId": "offer_8",
+        "Items": [
+          {
+            "ItemName": "Gems",
+            "Quantity": 8250,
+            "Price": 82.50
+          },
+          {
+            "ItemName": "Mythical Crate",
+            "Quantity": 5,
+            "Price": 5.00
+          },
+          {
+            "ItemName": "Mythical Key",
+            "Quantity": 5,
+            "Price": 5.00
+          },
+          {
+            "ItemName": "Legendary Crate",
+            "Quantity": 5,
+            "Price": 3.00
+          },
+          {
+            "ItemName": "Legendary Key",
+            "Quantity": 5,
+            "Price": 3.00
+          },
+          {
+            "ItemName": "Exotic Crate",
+            "Quantity": 5,
+            "Price": 1.75
+          },
+          {
+            "ItemName": "Exotic Key",
+            "Quantity": 5,
+            "Price": 1.75
+          },
+          {
+            "ItemName": "Rare Crate",
+            "Quantity": 5,
+            "Price": 1.00
+          },
+          {
+            "ItemName": "Rare Key",
+            "Quantity": 5,
+            "Price": 1.00
+          },
+          {
+            "ItemName": "Coin Boost",
+            "Quantity": 5,
+            "Price": 1.00
+          },
+          {
+            "ItemName": "Exp Boost",
+            "Quantity": 5,
+            "Price": 1.00
+          }
+        ],
+        "OldPrice": 80.00,
+        "NewPrice": 49.99,
+        "ExpirationTimestamp": 1755386400000,
+        "ValidityHours": 24
+      },
+      {
+        "OfferName": "LVL 5",
+        "offerType": 9,
+        "OfferId": "offer_9",
+        "Items": [
+          {
+            "ItemName": "Gems",
+            "Quantity": 2250,
+            "Price": 22.50
+          },
+          {
+            "ItemName": "Mythical Crate",
+            "Quantity": 1,
+            "Price": 5.00
+          },
+          {
+            "ItemName": "Mythical Key",
+            "Quantity": 1,
+            "Price": 5.00
+          },
+          {
+            "ItemName": "Legendary Crate",
+            "Quantity": 1,
+            "Price": 3.00
+          },
+          {
+            "ItemName": "Legendary Key",
+            "Quantity": 1,
+            "Price": 3.00
+          },
+          {
+            "ItemName": "Exotic Crate",
+            "Quantity": 1,
+            "Price": 1.75
+          },
+          {
+            "ItemName": "Exotic Key",
+            "Quantity": 1,
+            "Price": 1.75
+          },
+          {
+            "ItemName": "Rare Crate",
+            "Quantity": 1,
+            "Price": 1.00
+          },
+          {
+            "ItemName": "Rare Key",
+            "Quantity": 1,
+            "Price": 1.00
+          },
+          {
+            "ItemName": "Coin Boost",
+            "Quantity": 1,
+            "Price": 1.00
+          },
+          {
+            "ItemName": "Exp Boost",
+            "Quantity": 1,
+            "Price": 1.00
+          }
+        ],
+        "OldPrice": 45.00,
+        "NewPrice": 2.99,
+        "ExpirationTimestamp": 1755386400000,
+        "ValidityHours": 24
+      },
+      {
+        "OfferName": "LVL 10",
+        "offerType": 10,
+        "OfferId": "offer_10",
+        "Items": [
+          {
+            "ItemName": "Gems",
+            "Quantity": 2450,
+            "Price": 24.50
+          },
+          {
+            "ItemName": "Mythical Crate",
+            "Quantity": 2,
+            "Price": 5.00
+          },
+          {
+            "ItemName": "Mythical Key",
+            "Quantity": 2,
+            "Price": 5.00
+          },
+          {
+            "ItemName": "Legendary Crate",
+            "Quantity": 1,
+            "Price": 3.00
+          },
+          {
+            "ItemName": "Legendary Key",
+            "Quantity": 1,
+            "Price": 3.00
+          },
+          {
+            "ItemName": "Exotic Crate",
+            "Quantity": 1,
+            "Price": 1.75
+          },
+          {
+            "ItemName": "Exotic Key",
+            "Quantity": 1,
+            "Price": 1.75
+          },
+          {
+            "ItemName": "Rare Crate",
+            "Quantity": 1,
+            "Price": 1.00
+          },
+          {
+            "ItemName": "Rare Key",
+            "Quantity": 1,
+            "Price": 1.00
+          },
+          {
+            "ItemName": "Coin Boost",
+            "Quantity": 1,
+            "Price": 1.00
+          },
+          {
+            "ItemName": "Exp Boost",
+            "Quantity": 1,
+            "Price": 1.00
+          }
+        ],
+        "OldPrice": 60.00,
+        "NewPrice": 4.99,
+        "ExpirationTimestamp": 1755386400000,
+        "ValidityHours": 24
+      },
+      {
+        "OfferName": "Flash Sale I",
+        "offerType": 11,
+        "OfferId": "offer_11",
+        "Items": [
+          {
+            "ItemName": "Gems",
+            "Quantity": 1000,
+            "Price": 10.00
+          },
+          {
+            "ItemName": "Coin Boost",
+            "Quantity": 1,
+            "Price": 1.00
+          },
+          {
+            "ItemName": "Mythical Key",
+            "Quantity": 1,
+            "Price": 5.00
+          }
+        ],
+        "OldPrice": 15.00,
+        "NewPrice": 0.99,
+        "ExpirationTimestamp": 1755312900000,
+        "ValidityHours": 0.25
+      },
+      {
+        "OfferName": "Flash Sale II",
+        "offerType": 12,
+        "OfferId": "offer_12",
+        "Items": [
+          {
+            "ItemName": "Gems",
+            "Quantity": 1000,
+            "Price": 10.00
+          },
+          {
+            "ItemName": "Coin Boost",
+            "Quantity": 1,
+            "Price": 1.00
+          },
+          {
+            "ItemName": "Mythical Crate",
+            "Quantity": 1,
+            "Price": 5.00
+          }
+        ],
+        "OldPrice": 15.00,
+        "NewPrice": 0.99,
+        "ExpirationTimestamp": 1755312900000,
+        "ValidityHours": 0.25
+      }
+    ]
+  },
+  "boosterData": {
+    "coinBooster_1x": 0,
+    "coinBooster_6x": 0,
+    "coinBooster_12x": 0,
+    "coinBooster_24x": 0,
+    "expBooster_1x": 0,
+    "expBooster_6x": 0,
+    "expBooster_12x": 0,
+    "expBooster_24x": 0,
+    "coinBoosterEndTime": 0,
+    "expBoosterEndTime": 0
+  }
+}
