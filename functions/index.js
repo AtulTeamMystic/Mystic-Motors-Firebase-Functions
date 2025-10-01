@@ -2582,7 +2582,7 @@ async function getUserProfile(db, userId) {
 /**
  * Update user profile with clan info
  */
-async function updateUserProfileWithClanInfo(db, userId, clanId, clanRole) {
+async function updateUserProfileWithClanInfo(db, userId, clanId, clanRole, clanName = null, clanBadge = null) {
   const profile = await getUserProfile(db, userId);
   
   const updatedProfileData = {
@@ -2590,6 +2590,28 @@ async function updateUserProfileWithClanInfo(db, userId, clanId, clanRole) {
     clanId: clanId,
     clanRole: clanRole,
   };
+
+  // If clanName and clanBadge are not provided, fetch them from clan data
+  if (clanName === null || clanBadge === null) {
+    try {
+      const clan = await findClanByClanId(db, clanId);
+      if (clan && clan.data) {
+        if (clanName === null) clanName = clan.data.clanName;
+        if (clanBadge === null) clanBadge = clan.data.clanBadge;
+      }
+    } catch (error) {
+      console.error(`Error fetching clan details for ${clanId}:`, error);
+      // Continue with null values if fetch fails
+    }
+  }
+
+  // Add clanName and clanBadge to profile
+  if (clanName !== null) {
+    updatedProfileData.clanName = clanName;
+  }
+  if (clanBadge !== null) {
+    updatedProfileData.clanBadge = clanBadge;
+  }
 
   await profile.ref.update({
     profileData: JSON.stringify(updatedProfileData),
@@ -2603,12 +2625,22 @@ async function updateUserProfileWithClanInfo(db, userId, clanId, clanRole) {
 async function removeClanInfoFromUserProfile(db, userId) {
   const profile = await getUserProfile(db, userId);
   
-  const { clanId, clanRole, ...profileWithoutClan } = profile.data;
+  console.log(`Removing clan info for user ${userId}. Current clan fields:`, {
+    clanId: profile.data.clanId,
+    clanRole: profile.data.clanRole,
+    clanName: profile.data.clanName,
+    clanBadge: profile.data.clanBadge
+  });
+  
+  // Remove ALL clan-related fields to prevent data inconsistency
+  const { clanId, clanRole, clanName, clanBadge, ...profileWithoutClan } = profile.data;
   
   await profile.ref.update({
     profileData: JSON.stringify(profileWithoutClan),
     lastUpdated: admin.firestore.FieldValue.serverTimestamp(),
   });
+  
+  console.log(`Successfully removed all clan fields for user ${userId}`);
 }
 
 /**
@@ -2882,7 +2914,7 @@ exports.createClan = functions.https.onCall(async (data, context) => {
     await existingClansRef.set(clanData);
 
     // Update user profile to mark as clan owner
-    await updateUserProfileWithClanInfo(db, userId, clanData.clanId, CLAN_ROLES.LEADER);
+    await updateUserProfileWithClanInfo(db, userId, clanData.clanId, CLAN_ROLES.LEADER, clanData.clanName, clanData.clanBadge);
 
     console.log(`Clan created: ${clanData.clanId} by user ${userId}`);
 
@@ -3037,7 +3069,7 @@ exports.joinClan = functions.https.onCall(async (data, context) => {
         });
         
         // Update user profile with clan info
-        await updateUserProfileWithClanInfo(db, userId, clanId, CLAN_ROLES.MEMBER);
+        await updateUserProfileWithClanInfo(db, userId, clanId, CLAN_ROLES.MEMBER, clanData.clanName, clanData.clanBadge);
         
         return {
           success: true,
