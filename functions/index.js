@@ -449,9 +449,9 @@ function getConversionRate(trophies) {
  */
 exports.getActiveConversion = functions.https.onCall(async (data, context) => {
   const defaultUserId = "fMGdSdZ2DNcfsJD0Jewf7aM3CDF3";
-  const authUserId = context.auth && context.auth.uid;
+  const authUserId = (data.auth && data.auth.uid) || (context.auth && context.auth.uid);
   const actualData = data.data || data;
-  const userId = actualData.userId || authUserId || defaultUserId;
+  const userId = authUserId || actualData.userId || defaultUserId;
 
   console.log(`getActiveConversion called for userId: ${userId}`);
 
@@ -501,9 +501,9 @@ exports.getActiveConversion = functions.https.onCall(async (data, context) => {
  */
 exports.buyCoins = functions.https.onCall(async (data, context) => {
   const defaultUserId = "fMGdSdZ2DNcfsJD0Jewf7aM3CDF3";
-  const authUserId = context.auth && context.auth.uid;
+  const authUserId = (data.auth && data.auth.uid) || (context.auth && context.auth.uid);
   const actualData = data.data || data;
-  const userId = actualData.userId || authUserId || defaultUserId;
+  const userId = authUserId || actualData.userId || defaultUserId;
   const {gemAmount} = actualData;
 
   console.log(`buyCoins called for userId: ${userId}, ` +
@@ -655,9 +655,9 @@ exports.checkAppVersion = functions.https.onCall(async (data, context) => {
  */
 exports.buyBooster = functions.https.onCall(async (data, context) => {
   const defaultUserId = "fMGdSdZ2DNcfsJD0Jewf7aM3CDF3";
-  const authUserId = context.auth && context.auth.uid;
+  const authUserId = (data.auth && data.auth.uid) || (context.auth && context.auth.uid);
   const actualData = data.data || data;
-  const userId = actualData.userId || authUserId || defaultUserId;
+  const userId = authUserId || actualData.userId || defaultUserId;
   const {quantity = 1} = actualData;
 
   // Normalize booster type to lowercase (failsafe for Unity)
@@ -794,9 +794,9 @@ exports.buyBooster = functions.https.onCall(async (data, context) => {
  */
 exports.activateBooster = functions.https.onCall(async (data, context) => {
   const defaultUserId = "fMGdSdZ2DNcfsJD0Jewf7aM3CDF3";
-  const authUserId = context.auth && context.auth.uid;
+  const authUserId = (data.auth && data.auth.uid) || (context.auth && context.auth.uid);
   const actualData = data.data || data;
-  const userId = actualData.userId || authUserId || defaultUserId;
+  const userId = authUserId || actualData.userId || defaultUserId;
 
   // Log incoming data for debugging
   console.log("activateBooster - Raw incoming data keys:", 
@@ -956,9 +956,9 @@ exports.activateBooster = functions.https.onCall(async (data, context) => {
  */
 exports.getBoosterData = functions.https.onCall(async (data, context) => {
   const defaultUserId = "fMGdSdZ2DNcfsJD0Jewf7aM3CDF3";
-  const authUserId = context.auth && context.auth.uid;
+  const authUserId = (data.auth && data.auth.uid) || (context.auth && context.auth.uid);
   const actualData = data.data || data;
-  const userId = actualData.userId || authUserId || defaultUserId;
+  const userId = authUserId || actualData.userId || defaultUserId;
 
   console.log(`getBoosterData called for userId: ${userId}`);
 
@@ -1044,14 +1044,15 @@ exports.getBoosterData = functions.https.onCall(async (data, context) => {
 
 exports.updateUserScore = functions.https.onCall(async (data, context) => {
   // Ensure the user is authenticated
-  if (!context.auth) {
+  const authContext = (data.auth && data.auth) || (context.auth && context.auth);
+  if (!authContext) {
     throw new functions.https.HttpsError(
         "unauthenticated",
         "User must be authenticated.",
     );
   }
 
-  const userId = context.auth.uid;
+  const userId = authContext.uid;
   const {score} = data; // Data sent from Unity
 
   if (typeof score !== "number") {
@@ -1081,11 +1082,11 @@ exports.updateUserScore = functions.https.onCall(async (data, context) => {
 exports.getEndRaceRewards = functions.https.onCall(async (data, context) => {
   // For testing without authentication, get userId from data
   const defaultUserId = "fMGdSdZ2DNcfsJD0Jewf7aM3CDF3";
-  const authUserId = context.auth && context.auth.uid;
+  const authUserId = (data.auth && data.auth.uid) || (context.auth && context.auth.uid);
 
   // The actual data is nested inside data.data
   const actualData = data.data || data;
-  const userId = actualData.userId || authUserId || defaultUserId;
+  const userId = authUserId || actualData.userId || defaultUserId;
 
   // Debug logging
   console.log(`getEndRaceRewards called for userId: ${userId}`);
@@ -1198,11 +1199,11 @@ exports.getEndRaceRewards = functions.https.onCall(async (data, context) => {
 exports.getLeaderboard = functions.https.onCall(async (data, context) => {
   // For testing without authentication, get userId from data
   const defaultUserId = "fMGdSdZ2DNcfsJD0Jewf7aM3CDF3";
-  const authUserId = context.auth && context.auth.uid;
+  const authUserId = (data.auth && data.auth.uid) || (context.auth && context.auth.uid);
 
   // The actual data is nested inside data.data
   const actualData = data.data || data;
-  const userId = actualData.userId || authUserId || defaultUserId;
+  const userId = authUserId || actualData.userId || defaultUserId;
   // 1=trophyLevel, 2=careerEarning, 3=totalRace
   const rankType = actualData.rankType;
 
@@ -1324,14 +1325,15 @@ exports.getLeaderboard = functions.https.onCall(async (data, context) => {
 
 exports.updateUserScore = functions.https.onCall(async (data, context) => {
   // Ensure the user is authenticated
-  if (!context.auth) {
+  const authContext = (data.auth && data.auth) || (context.auth && context.auth);
+  if (!authContext) {
     throw new functions.https.HttpsError(
         "unauthenticated",
         "User must be authenticated.",
     );
   }
 
-  const userId = context.auth.uid;
+  const userId = authContext.uid;
   const {score} = data; // Data sent from Unity
 
   if (typeof score !== "number") {
@@ -1704,9 +1706,9 @@ function calculateLastPlaceDelta(playerIndex, ratings) {
 
 exports.startRace = functions.https.onCall(async (data, context) => {
   const defaultUserId = "fMGdSdZ2DNcfsJD0Jewf7aM3CDF3";
-  const authUserId = context.auth && context.auth.uid;
+  const authUserId = (data.auth && data.auth.uid) || (context.auth && context.auth.uid);
   const actualData = data.data || data;
-  const userId = actualData.userId || authUserId || defaultUserId;
+  const userId = authUserId || actualData.userId || defaultUserId;
   const {raceId, lobbyRatings, playerIndex} = actualData;
 
   console.log(`startRace called for userId: ${userId}, raceId: ${raceId}`);
@@ -1792,9 +1794,9 @@ exports.startRace = functions.https.onCall(async (data, context) => {
 
 exports.finishRace = functions.https.onCall(async (data, context) => {
   const defaultUserId = "fMGdSdZ2DNcfsJD0Jewf7aM3CDF3";
-  const authUserId = context.auth && context.auth.uid;
+  const authUserId = (data.auth && data.auth.uid) || (context.auth && context.auth.uid);
   const actualData = data.data || data;
-  const userId = actualData.userId || authUserId || defaultUserId;
+  const userId = authUserId || actualData.userId || defaultUserId;
   const {raceId, finishOrder, place, hasCoinBooster = false,
     hasExpBooster = false} = actualData;
 
@@ -1999,9 +2001,9 @@ exports.finishRace = functions.https.onCall(async (data, context) => {
 
 exports.claimRewards = functions.https.onCall(async (data, context) => {
   const defaultUserId = "fMGdSdZ2DNcfsJD0Jewf7aM3CDF3";
-  const authUserId = context.auth && context.auth.uid;
+  const authUserId = (data.auth && data.auth.uid) || (context.auth && context.auth.uid);
   const actualData = data.data || data;
-  const userId = actualData.userId || authUserId || defaultUserId;
+  const userId = authUserId || actualData.userId || defaultUserId;
   const {rewardType} = actualData;
 
   console.log(`claimRewards called for userId: ${userId}, ` +
@@ -2212,11 +2214,11 @@ exports.getRankRewards = functions.https.onCall(async (data, context) => {
 exports.openCrate = functions.https.onCall(async (data, context) => {
   // For testing without authentication, get userId from data
   const defaultUserId = "fMGdSdZ2DNcfsJD0Jewf7aM3CDF3";
-  const authUserId = context.auth && context.auth.uid;
+  const authUserId = (data.auth && data.auth.uid) || (context.auth && context.auth.uid);
 
   // The actual data is nested inside data.data
   const actualData = data.data || data;
-  const userId = actualData.userId || authUserId || defaultUserId;
+  const userId = authUserId || actualData.userId || defaultUserId;
   const crateType = actualData.crateType; // Data sent from Unity
 
   // Debug logging to see what we received
@@ -2845,9 +2847,9 @@ function checkClanPermissions(clanData, userId, allowedRoles) {
  */
 exports.createClan = functions.https.onCall(async (data, context) => {
   const defaultUserId = "fMGdSdZ2DNcfsJD0Jewf7aM3CDF3";
-  const authUserId = context.auth && context.auth.uid;
+  const authUserId = (data.auth && data.auth.uid) || (context.auth && context.auth.uid);
   const actualData = data.data || data;
-  const userId = actualData.userId || authUserId || defaultUserId;
+  const userId = authUserId || actualData.userId || defaultUserId;
 
   console.log(`createClan called for userId: ${userId}`);
 
@@ -2987,9 +2989,9 @@ exports.createClan = functions.https.onCall(async (data, context) => {
  */
 exports.joinClan = functions.https.onCall(async (data, context) => {
   const defaultUserId = "fMGdSdZ2DNcfsJD0Jewf7aM3CDF3";
-  const authUserId = context.auth && context.auth.uid;
+  const authUserId = (data.auth && data.auth.uid) || (context.auth && context.auth.uid);
   const actualData = data.data || data;
-  const userId = actualData.userId || authUserId || defaultUserId;
+  const userId = authUserId || actualData.userId || defaultUserId;
   const clanId = actualData.clanId;
 
   console.log(`joinClan called for userId: ${userId}, clanId: ${clanId}`);
@@ -3171,10 +3173,10 @@ exports.joinClan = functions.https.onCall(async (data, context) => {
  */
 exports.leaveClan = functions.https.onCall(async (data, context) => {
   const defaultUserId = "fMGdSdZ2DNcfsJD0Jewf7aM3CDF3";
-  const authUserId = context.auth && context.auth.uid;
+  const authUserId = (data.auth && data.auth.uid) || (context.auth && context.auth.uid);
   const actualData = data.data || data;
   // Prioritize the userId from the request data over the authenticated userId
-  const userId = actualData.userId || authUserId || defaultUserId;
+  const userId = authUserId || actualData.userId || defaultUserId;
 
   console.log(`leaveClan called for userId: ${userId}`);
 
@@ -3393,9 +3395,9 @@ exports.leaveClan = functions.https.onCall(async (data, context) => {
  */
 exports.inviteToClan = functions.https.onCall(async (data, context) => {
   const defaultUserId = "fMGdSdZ2DNcfsJD0Jewf7aM3CDF3";
-  const authUserId = context.auth && context.auth.uid;
+  const authUserId = (data.auth && data.auth.uid) || (context.auth && context.auth.uid);
   const actualData = data.data || data;
-  const userId = actualData.userId || authUserId || defaultUserId;
+  const userId = authUserId || actualData.userId || defaultUserId;
   const targetUserId = actualData.targetUserId;
 
   console.log(`inviteToClan called by userId: ${userId}, inviting: ${targetUserId}`);
@@ -3500,7 +3502,7 @@ exports.inviteToClan = functions.https.onCall(async (data, context) => {
  */
 exports.requestToJoinClan = functions.https.onCall(async (data, context) => {
   const defaultUserId = "fMGdSdZ2DNcfsJD0Jewf7aM3CDF3";
-  const authUserId = context.auth && context.auth.uid;
+  const authUserId = (data.auth && data.auth.uid) || (context.auth && context.auth.uid);
   const actualData = data.data || data;
   
   // Safe logging of request data
@@ -3509,7 +3511,7 @@ exports.requestToJoinClan = functions.https.onCall(async (data, context) => {
   console.log("Clan ID:", actualData.clanId);
   
   // Prioritize the userId from the request data over the authenticated userId
-  const userId = actualData.userId || authUserId || defaultUserId;
+  const userId = authUserId || actualData.userId || defaultUserId;
   const clanId = actualData.clanId;
 
   console.log(`requestToJoinClan called for userId: ${userId}, clanId: ${clanId}`);
@@ -3741,9 +3743,9 @@ exports.requestToJoinClan = functions.https.onCall(async (data, context) => {
  */
 exports.acceptJoinRequest = functions.https.onCall(async (data, context) => {
   const defaultUserId = "fMGdSdZ2DNcfsJD0Jewf7aM3CDF3";
-  const authUserId = context.auth && context.auth.uid;
+  const authUserId = (data.auth && data.auth.uid) || (context.auth && context.auth.uid);
   const actualData = data.data || data;
-  const userId = actualData.userId || authUserId || defaultUserId;
+  const userId = authUserId || actualData.userId || defaultUserId;
   const targetUserId = actualData.targetUserId;
 
   console.log(`acceptJoinRequest called by userId: ${userId}, accepting: ${targetUserId}`);
@@ -3958,9 +3960,9 @@ exports.acceptJoinRequest = functions.https.onCall(async (data, context) => {
  */
 exports.declineJoinRequest = functions.https.onCall(async (data, context) => {
   const defaultUserId = "fMGdSdZ2DNcfsJD0Jewf7aM3CDF3";
-  const authUserId = context.auth && context.auth.uid;
+  const authUserId = (data.auth && data.auth.uid) || (context.auth && context.auth.uid);
   const actualData = data.data || data;
-  const userId = actualData.userId || authUserId || defaultUserId;
+  const userId = authUserId || actualData.userId || defaultUserId;
   const targetUserId = actualData.targetUserId;
 
   console.log(`declineJoinRequest called by userId: ${userId}, declining: ${targetUserId}`);
@@ -4136,9 +4138,9 @@ exports.declineJoinRequest = functions.https.onCall(async (data, context) => {
  */
 exports.promoteMember = functions.https.onCall(async (data, context) => {
   const defaultUserId = "fMGdSdZ2DNcfsJD0Jewf7aM3CDF3";
-  const authUserId = context.auth && context.auth.uid;
+  const authUserId = (data.auth && data.auth.uid) || (context.auth && context.auth.uid);
   const actualData = data.data || data;
-  const userId = actualData.userId || authUserId || defaultUserId;
+  const userId = authUserId || actualData.userId || defaultUserId;
   const targetUserId = actualData.targetUserId;
 
   console.log(`=== promoteMember DEBUG ===`);
@@ -4363,9 +4365,9 @@ exports.promoteMember = functions.https.onCall(async (data, context) => {
  */
 exports.demoteMember = functions.https.onCall(async (data, context) => {
   const defaultUserId = "fMGdSdZ2DNcfsJD0Jewf7aM3CDF3";
-  const authUserId = context.auth && context.auth.uid;
+  const authUserId = (data.auth && data.auth.uid) || (context.auth && context.auth.uid);
   const actualData = data.data || data;
-  const userId = actualData.userId || authUserId || defaultUserId;
+  const userId = authUserId || actualData.userId || defaultUserId;
   const targetUserId = actualData.targetUserId;
 
   console.log(`demoteMember called by userId: ${userId}, demoting: ${targetUserId}`);
@@ -4585,9 +4587,9 @@ exports.demoteMember = functions.https.onCall(async (data, context) => {
  */
 exports.kickMember = functions.https.onCall(async (data, context) => {
   const defaultUserId = "fMGdSdZ2DNcfsJD0Jewf7aM3CDF3";
-  const authUserId = context.auth && context.auth.uid;
+  const authUserId = (data.auth && data.auth.uid) || (context.auth && context.auth.uid);
   const actualData = data.data || data;
-  const userId = actualData.userId || authUserId || defaultUserId;
+  const userId = authUserId || actualData.userId || defaultUserId;
   const targetUserId = actualData.targetUserId;
 
   console.log(`kickMember called by userId: ${userId}, kicking: ${targetUserId}`);
@@ -4791,9 +4793,9 @@ exports.kickMember = functions.https.onCall(async (data, context) => {
  */
 exports.getClanDetails = functions.https.onCall(async (data, context) => {
   const defaultUserId = "fMGdSdZ2DNcfsJD0Jewf7aM3CDF3";
-  const authUserId = context.auth && context.auth.uid;
+  const authUserId = (data.auth && data.auth.uid) || (context.auth && context.auth.uid);
   const actualData = data.data || data;
-  const userId = actualData.userId || authUserId || defaultUserId;
+  const userId = authUserId || actualData.userId || defaultUserId;
   const clanId = actualData.clanId;
 
   console.log(`=== getClanDetails START === userId: ${userId}, clanId: ${clanId}`);
@@ -4905,9 +4907,9 @@ exports.getClanDetails = functions.https.onCall(async (data, context) => {
  */
 exports.getClans = functions.https.onCall(async (data, context) => {
   const defaultUserId = "fMGdSdZ2DNcfsJD0Jewf7aM3CDF3";
-  const authUserId = context.auth && context.auth.uid;
+  const authUserId = (data.auth && data.auth.uid) || (context.auth && context.auth.uid);
   const actualData = data.data || data;
-  const userId = actualData.userId || authUserId || defaultUserId;
+  const userId = authUserId || actualData.userId || defaultUserId;
   
   // Optional filters
   const searchName = actualData.searchName;
@@ -5299,9 +5301,9 @@ exports.getClans = functions.https.onCall(async (data, context) => {
  */
 exports.updateClan = functions.https.onCall(async (data, context) => {
   const defaultUserId = "fMGdSdZ2DNcfsJD0Jewf7aM3CDF3";
-  const authUserId = context.auth && context.auth.uid;
+  const authUserId = (data.auth && data.auth.uid) || (context.auth && context.auth.uid);
   const actualData = data.data || data;
-  const userId = actualData.userId || authUserId || defaultUserId;
+  const userId = authUserId || actualData.userId || defaultUserId;
 
   console.log(`updateClan called by userId: ${userId}`);
 
@@ -5432,9 +5434,9 @@ exports.updateClan = functions.https.onCall(async (data, context) => {
  */
 exports.checkMaintenance = functions.https.onCall(async (data, context) => {
   const defaultUserId = "fMGdSdZ2DNcfsJD0Jewf7aM3CDF3";
-  const authUserId = context.auth && context.auth.uid;
+  const authUserId = (data.auth && data.auth.uid) || (context.auth && context.auth.uid);
   const actualData = data.data || data;
-  const userId = actualData.userId || authUserId || defaultUserId;
+  const userId = authUserId || actualData.userId || defaultUserId;
 
   console.log(`checkMaintenance called for userId: ${userId}`);
 
@@ -5519,9 +5521,9 @@ exports.checkMaintenance = functions.https.onCall(async (data, context) => {
  */
 exports.getMaintenanceReward = functions.https.onCall(async (data, context) => {
   const defaultUserId = "fMGdSdZ2DNcfsJD0Jewf7aM3CDF3";
-  const authUserId = context.auth && context.auth.uid;
+  const authUserId = (data.auth && data.auth.uid) || (context.auth && context.auth.uid);
   const actualData = data.data || data;
-  const userId = actualData.userId || authUserId || defaultUserId;
+  const userId = authUserId || actualData.userId || defaultUserId;
 
   console.log(`getMaintenanceReward called for userId: ${userId}`);
 
@@ -5616,9 +5618,9 @@ exports.getMaintenanceReward = functions.https.onCall(async (data, context) => {
  */
 exports.getUserClanDetails = functions.https.onCall(async (data, context) => {
   const defaultUserId = "fMGdSdZ2DNcfsJD0Jewf7aM3CDF3";
-  const authUserId = context.auth && context.auth.uid;
+  const authUserId = (data.auth && data.auth.uid) || (context.auth && context.auth.uid);
   const actualData = data.data || data;
-  const userId = actualData.userId || authUserId || defaultUserId;
+  const userId = authUserId || actualData.userId || defaultUserId;
 
   console.log(`=== getUserClanDetails START === userId: ${userId}`);
   // Safely log request data without circular references
@@ -5880,7 +5882,7 @@ exports.getUserClanDetails = functions.https.onCall(async (data, context) => {
  */
 exports.calculateBotDifficulty = functions.https.onCall(async (data, context) => {
   const defaultUserId = "fMGdSdZ2DNcfsJD0Jewf7aM3CDF3";
-  const authUserId = context.auth && context.auth.uid;
+  const authUserId = (data.auth && data.auth.uid) || (context.auth && context.auth.uid);
   const userId = authUserId || defaultUserId;
   
   console.log(`calculateBotDifficulty called by userId: ${userId}`);
@@ -5974,7 +5976,7 @@ exports.calculateBotDifficulty = functions.https.onCall(async (data, context) =>
  */
 exports.generateBotSpellDecks = functions.https.onCall(async (data, context) => {
   const defaultUserId = "fMGdSdZ2DNcfsJD0Jewf7aM3CDF3";
-  const authUserId = context.auth && context.auth.uid;
+  const authUserId = (data.auth && data.auth.uid) || (context.auth && context.auth.uid);
   const userId = authUserId || defaultUserId;
   
   console.log(`generateBotSpellDecks called by userId: ${userId}`);
@@ -6091,12 +6093,14 @@ exports.bookmarkClan = functions.https.onCall(async (data, context) => {
   let clanId;
   let userId;
   
-  // Always prioritize userId from Unity
-  if (data && data.userId) {
-    userId = data.userId;
-  } else if (data && data.data && data.data.userId) {
-    userId = data.data.userId;
-  } else {
+  // SECURITY: Always prioritize authenticated user over client-sent data
+  const authUserId = (data.auth && data.auth.uid) || (context.auth && context.auth.uid);
+  const actualData = data.data || data;
+  const defaultUserId = "fMGdSdZ2DNcfsJD0Jewf7aM3CDF3";
+  
+  userId = authUserId || actualData.userId || defaultUserId;
+  
+  if (!userId) {
     throw new functions.https.HttpsError(
       "invalid-argument",
       "Missing userId parameter"
@@ -6200,12 +6204,14 @@ exports.removeClanBookmark = functions.https.onCall(async (data, context) => {
   let clanId;
   let userId;
   
-  // Always prioritize userId from Unity
-  if (data && data.userId) {
-    userId = data.userId;
-  } else if (data && data.data && data.data.userId) {
-    userId = data.data.userId;
-  } else {
+  // SECURITY: Always prioritize authenticated user over client-sent data
+  const authUserId = (data.auth && data.auth.uid) || (context.auth && context.auth.uid);
+  const actualData = data.data || data;
+  const defaultUserId = "fMGdSdZ2DNcfsJD0Jewf7aM3CDF3";
+  
+  userId = authUserId || actualData.userId || defaultUserId;
+  
+  if (!userId) {
     throw new functions.https.HttpsError(
       "invalid-argument",
       "Missing userId parameter"
@@ -6302,24 +6308,11 @@ exports.getBookmarks = functions.https.onCall(async (data, context) => {
   }
   
   const defaultUserId = "fMGdSdZ2DNcfsJD0Jewf7aM3CDF3";
-  const authUserId = context.auth && context.auth.uid;
+  const authUserId = (data.auth && data.auth.uid) || (context.auth && context.auth.uid);
+  const actualData = data.data || data;
   
-  // Handle deeply nested data structure from Unity
-  // It could be data.userId, data.data.userId, or even data.data.data.userId
-  let userId = authUserId || defaultUserId;
-  
-  // Try to find userId in various locations
-  if (data && data.userId) {
-    userId = data.userId;
-  } else if (data && data.data) {
-    if (typeof data.data === "object") {
-      if (data.data.userId) {
-        userId = data.data.userId;
-      } else if (data.data.data && typeof data.data.data === "object" && data.data.data.userId) {
-        userId = data.data.data.userId;
-      }
-    }
-  }
+  // SECURITY: Always prioritize authenticated user over client-sent data
+  const userId = authUserId || actualData.userId || defaultUserId;
   
   console.log(`getBookmarks called by userId: ${userId}`);
 
