@@ -3162,16 +3162,18 @@ exports.leaveClan = functions.https.onCall(async (data, context) => {
       clanId = userProfile.data.clanId;
     }
     
-    // If no clanId in profile, check if they own a clan (data inconsistency case)
+    // If no clanId in profile, check if they own a clan or are a member of any clan
     if (!clanId) {
-      console.log(`User ${userId} has no clanId in profile, checking if they own a clan...`);
+      console.log(`User ${userId} has no clanId in profile, checking for clan membership...`);
       
       try {
-        // Check if the user owns a clan
+        // First check if the user owns a clan
         const ownedClansQuery = await db.collection("clans").doc(userId).get();
+        console.log(`Checking ownership: doc exists = ${ownedClansQuery.exists}`);
         
         if (ownedClansQuery.exists) {
           const clanData = ownedClansQuery.data();
+          console.log(`Found owned clan data:`, clanData ? Object.keys(clanData) : 'null');
           if (clanData && clanData.clanId) {
             clanId = clanData.clanId;
             console.log(`Found clan ownership: User ${userId} owns clan ${clanId} - fixing inconsistency`);
@@ -3179,9 +3181,48 @@ exports.leaveClan = functions.https.onCall(async (data, context) => {
             // Fix the inconsistency by updating the user's profile
             await updateUserProfileWithClanInfo(db, userId, clanId, CLAN_ROLES.LEADER);
           }
+        } else {
+          // User doesn't own a clan, but they might be a member of someone else's clan
+          // Search all clans to find if user is a member
+          console.log(`User ${userId} doesn't own a clan, searching all clans for membership...`);
+          
+          const allClansSnapshot = await db.collection("clans").get();
+          console.log(`Total clans to search: ${allClansSnapshot.size}`);
+          
+          let foundClan = null;
+          let userRole = null;
+          let searchCount = 0;
+          
+          // Iterate through all clans to find user membership
+          for (const clanDoc of allClansSnapshot.docs) {
+            searchCount++;
+            const clanData = clanDoc.data();
+            console.log(`Searching clan ${searchCount}/${allClansSnapshot.size}: ${clanData.clanId || 'no-id'} (owner: ${clanDoc.id})`);
+            
+            if (clanData.members && Array.isArray(clanData.members)) {
+              console.log(`  - Has ${clanData.members.length} members`);
+              const memberData = clanData.members.find(member => member.userId === userId);
+              if (memberData) {
+                console.log(`FOUND! User ${userId} as ${memberData.role} in clan ${clanData.clanId} owned by ${clanDoc.id}`);
+                clanId = clanData.clanId;
+                userRole = memberData.role;
+                
+                // Fix the inconsistency by updating the user's profile
+                console.log(`Fixing profile: Adding clanId ${clanId} and role ${userRole} to user ${userId}'s profile`);
+                await updateUserProfileWithClanInfo(db, userId, clanId, userRole, clanData.clanName, clanData.clanBadge);
+                break;
+              }
+            } else {
+              console.log(`  - No members array or empty`);
+            }
+          }
+          
+          if (!clanId) {
+            console.log(`After searching ${searchCount} clans, user ${userId} was not found as a member of any clan`);
+          }
         }
       } catch (err) {
-        console.error("Error checking clan ownership:", err);
+        console.error("Error checking clan membership:", err);
       }
     }
     
@@ -4381,7 +4422,9 @@ exports.getClanDetails = functions.https.onCall(async (data, context) => {
   const userId = actualData.userId || authUserId || defaultUserId;
   const clanId = actualData.clanId;
 
-  console.log(`getClanDetails called by userId: ${userId}, clanId: ${clanId}`);
+  console.log(`=== getClanDetails START === userId: ${userId}, clanId: ${clanId}`);
+  console.log(`Request data:`, JSON.stringify(data, null, 2));
+  console.log(`Timestamp: ${new Date().toISOString()}`);
 
   try {
     const db = admin.firestore();
@@ -5187,7 +5230,16 @@ exports.getUserClanDetails = functions.https.onCall(async (data, context) => {
   const actualData = data.data || data;
   const userId = actualData.userId || authUserId || defaultUserId;
 
-  console.log(`getUserClanDetails called for userId: ${userId}`);
+  console.log(`=== getUserClanDetails START === userId: ${userId}`);
+  // Safely log request data without circular references
+  try {
+    console.log(`Request data keys:`, data ? Object.keys(data) : "null");
+    console.log(`Request actualData:`, JSON.stringify(actualData, null, 2));
+  } catch (e) {
+    console.log(`Request data: [unable to stringify - ${e.message}]`);
+  }
+  console.log(`Auth context:`, context.auth ? `UID: ${context.auth.uid}` : "No auth");
+  console.log(`Timestamp: ${new Date().toISOString()}`);
 
   try {
     const db = admin.firestore();
@@ -5211,7 +5263,9 @@ exports.getUserClanDetails = functions.https.onCall(async (data, context) => {
     
     // Check if user has a clan
     if (!userProfile.data.clanId) {
-      // Also check if user owns a clan but doesn't have it in profile (double-check)
+      console.log(`User ${userId} has no clanId in profile, checking for clan membership...`);
+      
+      // First check if user owns a clan but doesn't have it in profile
       const clansRef = db.collection("clans").doc(userId);
       const clansDoc = await clansRef.get();
       
@@ -5230,11 +5284,50 @@ exports.getUserClanDetails = functions.https.onCall(async (data, context) => {
           data: ownedClanData
         };
       } else {
-        return {
-          success: false,
-          message: "User is not a member of any clan",
-          isInClan: false
-        };
+        // User doesn't own a clan, but they might be a member of someone else's clan
+        // Search all clans to find if user is a member
+        console.log(`User ${userId} doesn't own a clan, searching all clans for membership...`);
+        
+        const allClansSnapshot = await db.collection("clans").get();
+        let foundClan = null;
+        let userRole = null;
+        
+        // Iterate through all clans to find user membership
+        for (const clanDoc of allClansSnapshot.docs) {
+          const clanData = clanDoc.data();
+          if (clanData.members && Array.isArray(clanData.members)) {
+            const memberData = clanData.members.find(member => member.userId === userId);
+            if (memberData) {
+              console.log(`Found user ${userId} as ${memberData.role} in clan ${clanData.clanId} owned by ${clanDoc.id}`);
+              foundClan = {
+                doc: clanDoc,
+                id: clanDoc.id,
+                data: clanData
+              };
+              userRole = memberData.role;
+              break;
+            }
+          }
+        }
+        
+        if (foundClan) {
+          // User is a member of a clan but doesn't have clanId in profile - fix it
+          console.log(`Fixing profile: Adding clanId ${foundClan.data.clanId} and role ${userRole} to user ${userId}'s profile`);
+          await updateUserProfileWithClanInfo(db, userId, foundClan.data.clanId, userRole, foundClan.data.clanName, foundClan.data.clanBadge);
+          
+          // Update userProfile reference to continue with normal flow
+          const updatedProfile = await getUserProfile(db, userId);
+          userProfile.data = updatedProfile.data;
+          userProfile.ref = updatedProfile.ref;
+        } else {
+          // User is truly not a member of any clan
+          console.log(`User ${userId} is not a member of any clan`);
+          return {
+            success: false,
+            message: "User is not a member of any clan",
+            isInClan: false
+          };
+        }
       }
     }
     
@@ -5366,9 +5459,20 @@ exports.getUserClanDetails = functions.https.onCall(async (data, context) => {
       response.clanData.invites = clanData.invites || [];
     }
     
+    console.log(`=== getUserClanDetails SUCCESS === userId: ${userId}`);
+    console.log(`Response summary:`, {
+      success: response.success,
+      isInClan: response.isInClan,
+      userRole: response.userRole,
+      clanId: response.clanData && response.clanData.clanId,
+      clanName: response.clanData && response.clanData.clanName,
+      totalMembers: response.clanData && response.clanData.totalMembers
+    });
     return response;
   } catch (error) {
-    console.error("Error in getUserClanDetails function:", error);
+    console.error(`=== getUserClanDetails ERROR === userId: ${userId}`);
+    console.error("Error details:", error);
+    console.error("Error stack:", error.stack);
     throw new functions.https.HttpsError(
         error.code || "internal",
         error.message || "Failed to get user's clan details",
