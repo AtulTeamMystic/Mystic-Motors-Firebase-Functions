@@ -3173,7 +3173,7 @@ exports.leaveClan = functions.https.onCall(async (data, context) => {
         
         if (ownedClansQuery.exists) {
           const clanData = ownedClansQuery.data();
-          console.log(`Found owned clan data:`, clanData ? Object.keys(clanData) : 'null');
+          console.log(`Found owned clan data:`, clanData ? Object.keys(clanData) : "null");
           if (clanData && clanData.clanId) {
             clanId = clanData.clanId;
             console.log(`Found clan ownership: User ${userId} owns clan ${clanId} - fixing inconsistency`);
@@ -3197,7 +3197,7 @@ exports.leaveClan = functions.https.onCall(async (data, context) => {
           for (const clanDoc of allClansSnapshot.docs) {
             searchCount++;
             const clanData = clanDoc.data();
-            console.log(`Searching clan ${searchCount}/${allClansSnapshot.size}: ${clanData.clanId || 'no-id'} (owner: ${clanDoc.id})`);
+            console.log(`Searching clan ${searchCount}/${allClansSnapshot.size}: ${clanData.clanId || "no-id"} (owner: ${clanDoc.id})`);
             
             if (clanData.members && Array.isArray(clanData.members)) {
               console.log(`  - Has ${clanData.members.length} members`);
@@ -3266,15 +3266,27 @@ exports.leaveClan = functions.https.onCall(async (data, context) => {
           return m;
         }).filter(m => m.userId !== userId);
         
-        // Update clan with new leader and remove current user
-        await clanRef.update({
+        // CRITICAL FIX: Transfer clan ownership to the new leader
+        console.log(`Transferring clan ownership from ${clanOwnerUserId} to ${newLeader.userId}`);
+        
+        // Create new clan document under the new leader's ID
+        const newClanRef = db.collection("clans").doc(newLeader.userId);
+        const updatedClanData = {
+          ...clanData,
           members: updatedMembers,
-          totalMembers: admin.firestore.FieldValue.increment(-1),
+          totalMembers: clanData.totalMembers - 1,
           lastUpdated: admin.firestore.FieldValue.serverTimestamp()
-        });
+        };
+        
+        await newClanRef.set(updatedClanData);
+        
+        // Delete the old clan document
+        await clanRef.delete();
         
         // Update new leader's profile
-        await updateUserProfileWithClanInfo(db, newLeader.userId, clanId, CLAN_ROLES.LEADER);
+        await updateUserProfileWithClanInfo(db, newLeader.userId, clanId, CLAN_ROLES.LEADER, clanData.clanName, clanData.clanBadge);
+        
+        console.log(`Successfully transferred clan ${clanId} ownership to ${newLeader.userId}`);
       } else {
         // No co-leaders, check for any members
         const otherMembers = clanData.members.filter(m => m.userId !== userId);
@@ -3289,15 +3301,27 @@ exports.leaveClan = functions.https.onCall(async (data, context) => {
             return m;
           }).filter(m => m.userId !== userId);
           
-          // Update clan with new leader and remove current user
-          await clanRef.update({
+          // CRITICAL FIX: Transfer clan ownership to the new leader
+          console.log(`Transferring clan ownership from ${clanOwnerUserId} to ${newLeader.userId}`);
+          
+          // Create new clan document under the new leader's ID
+          const newClanRef = db.collection("clans").doc(newLeader.userId);
+          const updatedClanData = {
+            ...clanData,
             members: updatedMembers,
-            totalMembers: admin.firestore.FieldValue.increment(-1),
+            totalMembers: clanData.totalMembers - 1,
             lastUpdated: admin.firestore.FieldValue.serverTimestamp()
-          });
+          };
+          
+          await newClanRef.set(updatedClanData);
+          
+          // Delete the old clan document
+          await clanRef.delete();
           
           // Update new leader's profile
-          await updateUserProfileWithClanInfo(db, newLeader.userId, clanId, CLAN_ROLES.LEADER);
+          await updateUserProfileWithClanInfo(db, newLeader.userId, clanId, CLAN_ROLES.LEADER, clanData.clanName, clanData.clanBadge);
+          
+          console.log(`Successfully transferred clan ${clanId} ownership to ${newLeader.userId}`);
         } else {
           // No other members, delete the clan
           await clanRef.delete();
@@ -4423,7 +4447,16 @@ exports.getClanDetails = functions.https.onCall(async (data, context) => {
   const clanId = actualData.clanId;
 
   console.log(`=== getClanDetails START === userId: ${userId}, clanId: ${clanId}`);
-  console.log(`Request data:`, JSON.stringify(data, null, 2));
+  // Safe logging to avoid circular reference errors
+  try {
+    console.log(`Request data keys:`, Object.keys(data));
+    console.log(`Actual data:`, {
+      userId: actualData.userId,
+      clanId: actualData.clanId
+    });
+  } catch (e) {
+    console.log(`Request data logging error:`, e.message);
+  }
   console.log(`Timestamp: ${new Date().toISOString()}`);
 
   try {
@@ -4447,32 +4480,37 @@ exports.getClanDetails = functions.https.onCall(async (data, context) => {
     
     const clanData = clan.data;
     
+    // Log clan data safely
+    console.log(`Found clan with ID: ${clanData.clanId}, name: ${clanData.clanName}, members count: ${clanData.members ? clanData.members.length : 0}`);
+    
     // Check if requester is a member to show extra information
-    const isMember = clanData.members.some(m => m.userId === userId);
-    const userRole = isMember ? 
-        clanData.members.find(m => m.userId === userId).role : 
-        null;
+    const members = clanData.members || [];
+    const isMember = members.some(m => m && m.userId === userId);
+    const memberData = members.find(m => m && m.userId === userId);
+    const userRole = isMember && memberData ? memberData.role : null;
+        
+    console.log(`User ${userId} is member: ${isMember}, role: ${userRole}`);
     
     // Basic clan data visible to everyone
     const response = {
       success: true,
       clanData: {
-        clanId: clanData.clanId,
-        clanName: clanData.clanName,
-        clanDescription: clanData.clanDescription,
-        clanBadge: clanData.clanBadge,
-        clanType: clanData.clanType,
-        clanLocation: clanData.clanLocation,
-        clanLanguage: clanData.clanLanguage,
-        minimumRequiredTrophies: clanData.minimumRequiredTrophies,
-        totalMembers: clanData.totalMembers,
-        createdBy: clanData.createdBy,
-        members: clanData.members.map(m => ({
-          userId: m.userId,
-          userName: m.userName,
-          role: m.role,
-          trophies: m.trophies,
-          joinedAt: m.joinedAt,
+        clanId: clanData.clanId || "",
+        clanName: clanData.clanName || "",
+        clanDescription: clanData.clanDescription || "",
+        clanBadge: clanData.clanBadge || 0,
+        clanType: clanData.clanType || 0,
+        clanLocation: clanData.clanLocation || "",
+        clanLanguage: clanData.clanLanguage || "",
+        minimumRequiredTrophies: clanData.minimumRequiredTrophies || 0,
+        totalMembers: clanData.totalMembers || 0,
+        createdBy: clanData.createdBy || "",
+        members: (clanData.members || []).map(m => ({
+          userId: m.userId || "",
+          userName: m.userName || "",
+          role: m.role || "",
+          trophies: m.trophies || 0,
+          joinedAt: m.joinedAt || null,
         })),
       }
     };
@@ -4487,6 +4525,8 @@ exports.getClanDetails = functions.https.onCall(async (data, context) => {
     if (isMember) {
       response.userRole = userRole;
     }
+    
+    console.log(`Returning response for clan ${clanId}, member count: ${response.clanData.members.length}`);
     
     return response;
   } catch (error) {
