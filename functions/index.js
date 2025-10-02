@@ -2583,7 +2583,11 @@ async function getUserProfile(db, userId) {
  * Update user profile with clan info
  */
 async function updateUserProfileWithClanInfo(db, userId, clanId, clanRole, clanName = null, clanBadge = null) {
+  console.log(`updateUserProfileWithClanInfo called for user ${userId} with clanId: ${clanId}, clanRole: ${clanRole}, clanName: ${clanName}, clanBadge: ${clanBadge}`);
+  
   const profile = await getUserProfile(db, userId);
+  
+  console.log(`Current profile data for user ${userId}:`, profile.data);
   
   const updatedProfileData = {
     ...profile.data,
@@ -2593,11 +2597,13 @@ async function updateUserProfileWithClanInfo(db, userId, clanId, clanRole, clanN
 
   // If clanName and clanBadge are not provided, fetch them from clan data
   if (clanName === null || clanBadge === null) {
+    console.log(`Fetching clan details for ${clanId} because clanName or clanBadge is null`);
     try {
       const clan = await findClanByClanId(db, clanId);
       if (clan && clan.data) {
         if (clanName === null) clanName = clan.data.clanName;
         if (clanBadge === null) clanBadge = clan.data.clanBadge;
+        console.log(`Fetched clan details - clanName: ${clanName}, clanBadge: ${clanBadge}`);
       }
     } catch (error) {
       console.error(`Error fetching clan details for ${clanId}:`, error);
@@ -2613,10 +2619,14 @@ async function updateUserProfileWithClanInfo(db, userId, clanId, clanRole, clanN
     updatedProfileData.clanBadge = clanBadge;
   }
 
+  console.log(`Final updated profile data for user ${userId}:`, updatedProfileData);
+
   await profile.ref.update({
     profileData: JSON.stringify(updatedProfileData),
     lastUpdated: admin.firestore.FieldValue.serverTimestamp(),
   });
+  
+  console.log(`Successfully updated profile for user ${userId} with clan info`);
 }
 
 /**
@@ -3033,7 +3043,17 @@ exports.joinClan = functions.https.onCall(async (data, context) => {
       });
       
       // Update user profile with clan info
-      await updateUserProfileWithClanInfo(db, userId, clanId, CLAN_ROLES.MEMBER);
+      await updateUserProfileWithClanInfo(db, userId, clanId, CLAN_ROLES.MEMBER, clanData.clanName, clanData.clanBadge);
+      
+      // VERIFICATION: Read back the profile to confirm data was saved
+      console.log("VERIFICATION: Reading back user profile after join...");
+      const verifyProfile = await getUserProfile(db, userId);
+      console.log("VERIFICATION: Profile after join:", {
+        clanId: verifyProfile.data.clanId,
+        clanRole: verifyProfile.data.clanRole,
+        clanName: verifyProfile.data.clanName,
+        clanBadge: verifyProfile.data.clanBadge
+      });
       
       return {
         success: true,
@@ -3070,6 +3090,16 @@ exports.joinClan = functions.https.onCall(async (data, context) => {
         
         // Update user profile with clan info
         await updateUserProfileWithClanInfo(db, userId, clanId, CLAN_ROLES.MEMBER, clanData.clanName, clanData.clanBadge);
+        
+        // VERIFICATION: Read back the profile to confirm data was saved
+        console.log("VERIFICATION: Reading back user profile after invitation join...");
+        const verifyProfile = await getUserProfile(db, userId);
+        console.log("VERIFICATION: Profile after invitation join:", {
+          clanId: verifyProfile.data.clanId,
+          clanRole: verifyProfile.data.clanRole,
+          clanName: verifyProfile.data.clanName,
+          clanBadge: verifyProfile.data.clanBadge
+        });
         
         return {
           success: true,
@@ -3147,11 +3177,7 @@ exports.leaveClan = functions.https.onCall(async (data, context) => {
             console.log(`Found clan ownership: User ${userId} owns clan ${clanId} - fixing inconsistency`);
             
             // Fix the inconsistency by updating the user's profile
-            const userRef = db.collection("profileData").doc(userId);
-            await userRef.update({
-              clanId: clanId,
-              clanRole: CLAN_ROLES.LEADER
-            });
+            await updateUserProfileWithClanInfo(db, userId, clanId, CLAN_ROLES.LEADER);
           }
         }
       } catch (err) {
@@ -5174,6 +5200,14 @@ exports.getUserClanDetails = functions.https.onCall(async (data, context) => {
     
     // Get the user's profile to find their clan ID
     const userProfile = await getUserProfile(db, userId);
+    
+    console.log(`getUserClanDetails - User ${userId} profile data:`, {
+      clanId: userProfile.data.clanId,
+      clanRole: userProfile.data.clanRole,
+      clanName: userProfile.data.clanName,
+      clanBadge: userProfile.data.clanBadge,
+      allKeys: Object.keys(userProfile.data)
+    });
     
     // Check if user has a clan
     if (!userProfile.data.clanId) {
