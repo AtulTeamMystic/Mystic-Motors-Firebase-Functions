@@ -4113,6 +4113,12 @@ exports.promoteMember = functions.https.onCall(async (data, context) => {
   const userId = actualData.userId || authUserId || defaultUserId;
   const targetUserId = actualData.targetUserId;
 
+  console.log(`=== promoteMember DEBUG ===`);
+  console.log(`Raw data keys: ${Object.keys(data)}`);
+  console.log(`actualData.userId: ${actualData.userId}`);
+  console.log(`authUserId: ${authUserId}`);
+  console.log(`Final userId: ${userId}`);
+  console.log(`targetUserId: ${targetUserId}`);
   console.log(`promoteMember called by userId: ${userId}, promoting: ${targetUserId}`);
 
   try {
@@ -4125,18 +4131,113 @@ exports.promoteMember = functions.https.onCall(async (data, context) => {
       );
     }
     
-    // Get user profile (clan admin)
+    // Check for and fix any data inconsistencies first
+    const fixResult = await fixClanDataInconsistency(db, userId);
+    if (fixResult.fixed) {
+      console.log(`Fixed clan data inconsistency for user ${userId}: ${fixResult.message}`);
+    }
+
+    // Get user profile (clan admin) after potential fixes
     const userProfile = await getUserProfile(db, userId);
+    console.log(`User ${userId} profile clanId: ${userProfile.data.clanId}`);
     
-    // Check if user is in a clan
-    if (!userProfile.data.clanId) {
+    // More thorough check: verify user is actually in a clan and has proper role
+    let isUserInAnyClan = false;
+    let userCurrentClanId = null;
+    let userClanRole = null;
+    
+    // First check if user has a clanId in profile
+    if (userProfile.data.clanId) {
+      console.log(`User ${userId} has clanId in profile: ${userProfile.data.clanId}`);
+      
+      // Verify the clan actually exists and user is in it
+      const currentClan = await findClanByClanId(db, userProfile.data.clanId);
+      if (currentClan) {
+        console.log(`Found clan for clanId ${userProfile.data.clanId}, checking member list...`);
+        
+        const memberData = currentClan.data.members.find(m => m.userId === userId);
+        if (memberData) {
+          isUserInAnyClan = true;
+          userCurrentClanId = userProfile.data.clanId;
+          userClanRole = memberData.role;
+          console.log(`User ${userId} is confirmed to be in clan ${userCurrentClanId} with role ${userClanRole}`);
+        } else {
+          console.log(`User ${userId} has invalid clanId reference, will clean it up`);
+          // Clean up the invalid reference immediately
+          const { clanId, clanRole, ...profileWithoutClan } = userProfile.data;
+          await userProfile.ref.update({
+            profileData: JSON.stringify(profileWithoutClan),
+            lastUpdated: admin.firestore.FieldValue.serverTimestamp()
+          });
+          console.log(`Cleaned up invalid clan reference for user ${userId}`);
+        }
+      } else {
+        console.log(`Clan not found for clanId ${userProfile.data.clanId}, cleaning up profile`);
+        // Clean up the invalid reference immediately
+        const { clanId, clanRole, ...profileWithoutClan } = userProfile.data;
+        await userProfile.ref.update({
+          profileData: JSON.stringify(profileWithoutClan),
+          lastUpdated: admin.firestore.FieldValue.serverTimestamp()
+        });
+        console.log(`Cleaned up non-existent clan reference for user ${userId}`);
+      }
+    } else {
+      console.log(`User ${userId} has no clanId in profile`);
+    }
+    
+    // Also check if user owns a clan (they could be a leader without clanId in profile)
+    if (!isUserInAnyClan) {
+      console.log(`Checking if user ${userId} owns a clan...`);
+      const clansRef = db.collection("clans").doc(userId);
+      const clansDoc = await clansRef.get();
+      
+      if (clansDoc.exists) {
+        const ownedClanData = clansDoc.data();
+        isUserInAnyClan = true;
+        userCurrentClanId = ownedClanData.clanId;
+        userClanRole = CLAN_ROLES.LEADER;
+        console.log(`User ${userId} owns clan ${userCurrentClanId} as LEADER`);
+        
+        // Update profile to include the clan info if missing
+        if (!userProfile.data.clanId) {
+          console.log(`Adding missing clan info to user ${userId} profile`);
+          const updatedProfileData = {
+            ...userProfile.data,
+            clanId: ownedClanData.clanId,
+            clanRole: CLAN_ROLES.LEADER,
+          };
+          
+          await userProfile.ref.update({
+            profileData: JSON.stringify(updatedProfileData),
+            lastUpdated: admin.firestore.FieldValue.serverTimestamp()
+          });
+        }
+      } else {
+        console.log(`User ${userId} does not own a clan`);
+      }
+    } else {
+      console.log(`User ${userId} already confirmed to be in a clan, skipping ownership check`);
+    }
+    
+    // Final check: if user is not in any clan, reject the request
+    if (!isUserInAnyClan) {
       throw new functions.https.HttpsError(
           "failed-precondition",
           "You are not a member of any clan."
       );
     }
     
-    const clanId = userProfile.data.clanId;
+    console.log(`User ${userId} confirmed to be in clan ${userCurrentClanId} with role ${userClanRole}`);
+    
+    // Check if user has permission to promote (only leaders can promote)
+    if (userClanRole !== CLAN_ROLES.LEADER) {
+      throw new functions.https.HttpsError(
+          "permission-denied",
+          "Only clan leaders can promote members."
+      );
+    }
+    
+    const clanId = userCurrentClanId;
     const clan = await findClanByClanId(db, clanId);
     
     if (!clan) {
@@ -4150,8 +4251,7 @@ exports.promoteMember = functions.https.onCall(async (data, context) => {
     const clanOwnerUserId = clan.id;
     const clanRef = db.collection("clans").doc(clanOwnerUserId);
     
-    // Check if user is leader (only leaders can promote)
-    checkClanPermissions(clanData, userId, [CLAN_ROLES.LEADER]);
+    // Permission check already done above, no need to repeat
     
     // Check if target user is in the clan
     const targetMember = clanData.members.find(m => m.userId === targetUserId);
@@ -4237,18 +4337,113 @@ exports.demoteMember = functions.https.onCall(async (data, context) => {
       );
     }
     
-    // Get user profile (clan admin)
+    // Check for and fix any data inconsistencies first
+    const fixResult = await fixClanDataInconsistency(db, userId);
+    if (fixResult.fixed) {
+      console.log(`Fixed clan data inconsistency for user ${userId}: ${fixResult.message}`);
+    }
+
+    // Get user profile (clan admin) after potential fixes
     const userProfile = await getUserProfile(db, userId);
+    console.log(`User ${userId} profile clanId: ${userProfile.data.clanId}`);
     
-    // Check if user is in a clan
-    if (!userProfile.data.clanId) {
+    // More thorough check: verify user is actually in a clan and has proper role
+    let isUserInAnyClan = false;
+    let userCurrentClanId = null;
+    let userClanRole = null;
+    
+    // First check if user has a clanId in profile
+    if (userProfile.data.clanId) {
+      console.log(`User ${userId} has clanId in profile: ${userProfile.data.clanId}`);
+      
+      // Verify the clan actually exists and user is in it
+      const currentClan = await findClanByClanId(db, userProfile.data.clanId);
+      if (currentClan) {
+        console.log(`Found clan for clanId ${userProfile.data.clanId}, checking member list...`);
+        
+        const memberData = currentClan.data.members.find(m => m.userId === userId);
+        if (memberData) {
+          isUserInAnyClan = true;
+          userCurrentClanId = userProfile.data.clanId;
+          userClanRole = memberData.role;
+          console.log(`User ${userId} is confirmed to be in clan ${userCurrentClanId} with role ${userClanRole}`);
+        } else {
+          console.log(`User ${userId} has invalid clanId reference, will clean it up`);
+          // Clean up the invalid reference immediately
+          const { clanId, clanRole, ...profileWithoutClan } = userProfile.data;
+          await userProfile.ref.update({
+            profileData: JSON.stringify(profileWithoutClan),
+            lastUpdated: admin.firestore.FieldValue.serverTimestamp()
+          });
+          console.log(`Cleaned up invalid clan reference for user ${userId}`);
+        }
+      } else {
+        console.log(`Clan not found for clanId ${userProfile.data.clanId}, cleaning up profile`);
+        // Clean up the invalid reference immediately
+        const { clanId, clanRole, ...profileWithoutClan } = userProfile.data;
+        await userProfile.ref.update({
+          profileData: JSON.stringify(profileWithoutClan),
+          lastUpdated: admin.firestore.FieldValue.serverTimestamp()
+        });
+        console.log(`Cleaned up non-existent clan reference for user ${userId}`);
+      }
+    } else {
+      console.log(`User ${userId} has no clanId in profile`);
+    }
+    
+    // Also check if user owns a clan (they could be a leader without clanId in profile)
+    if (!isUserInAnyClan) {
+      console.log(`Checking if user ${userId} owns a clan...`);
+      const clansRef = db.collection("clans").doc(userId);
+      const clansDoc = await clansRef.get();
+      
+      if (clansDoc.exists) {
+        const ownedClanData = clansDoc.data();
+        isUserInAnyClan = true;
+        userCurrentClanId = ownedClanData.clanId;
+        userClanRole = CLAN_ROLES.LEADER;
+        console.log(`User ${userId} owns clan ${userCurrentClanId} as LEADER`);
+        
+        // Update profile to include the clan info if missing
+        if (!userProfile.data.clanId) {
+          console.log(`Adding missing clan info to user ${userId} profile`);
+          const updatedProfileData = {
+            ...userProfile.data,
+            clanId: ownedClanData.clanId,
+            clanRole: CLAN_ROLES.LEADER,
+          };
+          
+          await userProfile.ref.update({
+            profileData: JSON.stringify(updatedProfileData),
+            lastUpdated: admin.firestore.FieldValue.serverTimestamp()
+          });
+        }
+      } else {
+        console.log(`User ${userId} does not own a clan`);
+      }
+    } else {
+      console.log(`User ${userId} already confirmed to be in a clan, skipping ownership check`);
+    }
+    
+    // Final check: if user is not in any clan, reject the request
+    if (!isUserInAnyClan) {
       throw new functions.https.HttpsError(
           "failed-precondition",
           "You are not a member of any clan."
       );
     }
     
-    const clanId = userProfile.data.clanId;
+    console.log(`User ${userId} confirmed to be in clan ${userCurrentClanId} with role ${userClanRole}`);
+    
+    // Check if user has permission to demote (only leaders can demote)
+    if (userClanRole !== CLAN_ROLES.LEADER) {
+      throw new functions.https.HttpsError(
+          "permission-denied",
+          "Only clan leaders can demote members."
+      );
+    }
+    
+    const clanId = userCurrentClanId;
     const clan = await findClanByClanId(db, clanId);
     
     if (!clan) {
@@ -4349,18 +4544,105 @@ exports.kickMember = functions.https.onCall(async (data, context) => {
       );
     }
     
-    // Get user profile (clan admin)
+    // Check for and fix any data inconsistencies first
+    const fixResult = await fixClanDataInconsistency(db, userId);
+    if (fixResult.fixed) {
+      console.log(`Fixed clan data inconsistency for user ${userId}: ${fixResult.message}`);
+    }
+
+    // Get user profile (clan admin) after potential fixes
     const userProfile = await getUserProfile(db, userId);
+    console.log(`User ${userId} profile clanId: ${userProfile.data.clanId}`);
     
-    // Check if user is in a clan
-    if (!userProfile.data.clanId) {
+    // More thorough check: verify user is actually in a clan and has proper role
+    let isUserInAnyClan = false;
+    let userCurrentClanId = null;
+    let userClanRole = null;
+    
+    // First check if user has a clanId in profile
+    if (userProfile.data.clanId) {
+      console.log(`User ${userId} has clanId in profile: ${userProfile.data.clanId}`);
+      
+      // Verify the clan actually exists and user is in it
+      const currentClan = await findClanByClanId(db, userProfile.data.clanId);
+      if (currentClan) {
+        console.log(`Found clan for clanId ${userProfile.data.clanId}, checking member list...`);
+        
+        const memberData = currentClan.data.members.find(m => m.userId === userId);
+        if (memberData) {
+          isUserInAnyClan = true;
+          userCurrentClanId = userProfile.data.clanId;
+          userClanRole = memberData.role;
+          console.log(`User ${userId} is confirmed to be in clan ${userCurrentClanId} with role ${userClanRole}`);
+        } else {
+          console.log(`User ${userId} has invalid clanId reference, will clean it up`);
+          // Clean up the invalid reference immediately
+          const { clanId, clanRole, ...profileWithoutClan } = userProfile.data;
+          await userProfile.ref.update({
+            profileData: JSON.stringify(profileWithoutClan),
+            lastUpdated: admin.firestore.FieldValue.serverTimestamp()
+          });
+          console.log(`Cleaned up invalid clan reference for user ${userId}`);
+        }
+      } else {
+        console.log(`Clan not found for clanId ${userProfile.data.clanId}, cleaning up profile`);
+        // Clean up the invalid reference immediately
+        const { clanId, clanRole, ...profileWithoutClan } = userProfile.data;
+        await userProfile.ref.update({
+          profileData: JSON.stringify(profileWithoutClan),
+          lastUpdated: admin.firestore.FieldValue.serverTimestamp()
+        });
+        console.log(`Cleaned up non-existent clan reference for user ${userId}`);
+      }
+    } else {
+      console.log(`User ${userId} has no clanId in profile`);
+    }
+    
+    // Also check if user owns a clan (they could be a leader without clanId in profile)
+    if (!isUserInAnyClan) {
+      console.log(`Checking if user ${userId} owns a clan...`);
+      const clansRef = db.collection("clans").doc(userId);
+      const clansDoc = await clansRef.get();
+      
+      if (clansDoc.exists) {
+        const ownedClanData = clansDoc.data();
+        isUserInAnyClan = true;
+        userCurrentClanId = ownedClanData.clanId;
+        userClanRole = CLAN_ROLES.LEADER;
+        console.log(`User ${userId} owns clan ${userCurrentClanId} as LEADER`);
+        
+        // Update profile to include the clan info if missing
+        if (!userProfile.data.clanId) {
+          console.log(`Adding missing clan info to user ${userId} profile`);
+          const updatedProfileData = {
+            ...userProfile.data,
+            clanId: ownedClanData.clanId,
+            clanRole: CLAN_ROLES.LEADER,
+          };
+          
+          await userProfile.ref.update({
+            profileData: JSON.stringify(updatedProfileData),
+            lastUpdated: admin.firestore.FieldValue.serverTimestamp()
+          });
+        }
+      } else {
+        console.log(`User ${userId} does not own a clan`);
+      }
+    } else {
+      console.log(`User ${userId} already confirmed to be in a clan, skipping ownership check`);
+    }
+    
+    // Final check: if user is not in any clan, reject the request
+    if (!isUserInAnyClan) {
       throw new functions.https.HttpsError(
           "failed-precondition",
           "You are not a member of any clan."
       );
     }
     
-    const clanId = userProfile.data.clanId;
+    console.log(`User ${userId} confirmed to be in clan ${userCurrentClanId} with role ${userClanRole}`);
+    
+    const clanId = userCurrentClanId;
     const clan = await findClanByClanId(db, clanId);
     
     if (!clan) {
