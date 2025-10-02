@@ -2654,6 +2654,34 @@ async function removeClanInfoFromUserProfile(db, userId) {
 }
 
 /**
+ * Send notification to user about clan-related events
+ * Creates a notification document that client apps can listen to in real-time
+ */
+async function sendClanNotification(db, userId, type, data) {
+  try {
+    const notificationData = {
+      userId: userId,
+      type: type, // 'kicked_from_clan', 'promoted', 'demoted', etc.
+      data: data,
+      timestamp: admin.firestore.FieldValue.serverTimestamp(),
+      read: false,
+      id: admin.firestore.FieldValue.serverTimestamp().toString() + "_" + Math.random().toString(36).substr(2, 9)
+    };
+
+    // Add to user's notifications subcollection
+    await db.collection("users").doc(userId).collection("notifications").add(notificationData);
+    
+    // Also add to a global notifications collection for easier querying
+    await db.collection("notifications").add(notificationData);
+    
+    console.log(`Notification sent to user ${userId}: ${type}`);
+  } catch (error) {
+    console.error(`Failed to send notification to user ${userId}:`, error);
+    // Don't throw error - notification failure shouldn't break the main function
+  }
+}
+
+/**
  * Fix clan data inconsistencies
  * This function checks if a user has a valid clan association
  * and fixes the user profile if there's an inconsistency
@@ -4295,6 +4323,21 @@ exports.promoteMember = functions.https.onCall(async (data, context) => {
     // Update target user profile
     await updateUserProfileWithClanInfo(db, targetUserId, clanId, CLAN_ROLES.CO_LEADER);
     
+    // Get admin member info for notification
+    const adminMember = clanData.members.find(m => m.userId === userId);
+    
+    // Send real-time notification to the promoted user
+    await sendClanNotification(db, targetUserId, "promoted_in_clan", {
+      clanName: clanData.clanName,
+      clanBadge: clanData.clanBadge,
+      promotedBy: (adminMember && adminMember.username) || userId,
+      promotedByRole: (adminMember && adminMember.role) || CLAN_ROLES.LEADER,
+      oldRole: CLAN_ROLES.MEMBER,
+      newRole: CLAN_ROLES.CO_LEADER,
+      timestamp: new Date().toISOString(),
+      message: `You have been promoted to Co-Leader in ${clanData.clanName}!`,
+    });
+    
     return {
       success: true,
       message: "Member promoted to co-leader successfully",
@@ -4502,6 +4545,21 @@ exports.demoteMember = functions.https.onCall(async (data, context) => {
     // Update target user profile
     await updateUserProfileWithClanInfo(db, targetUserId, clanId, CLAN_ROLES.MEMBER);
     
+    // Get admin member info for notification
+    const adminMember = clanData.members.find(m => m.userId === userId);
+    
+    // Send real-time notification to the demoted user
+    await sendClanNotification(db, targetUserId, "demoted_in_clan", {
+      clanName: clanData.clanName,
+      clanBadge: clanData.clanBadge,
+      demotedBy: (adminMember && adminMember.username) || userId,
+      demotedByRole: (adminMember && adminMember.role) || CLAN_ROLES.LEADER,
+      oldRole: CLAN_ROLES.CO_LEADER,
+      newRole: CLAN_ROLES.MEMBER,
+      timestamp: new Date().toISOString(),
+      message: `You have been demoted to Member in ${clanData.clanName}`,
+    });
+    
     return {
       success: true,
       message: "Co-leader demoted to member successfully",
@@ -4698,6 +4756,16 @@ exports.kickMember = functions.https.onCall(async (data, context) => {
     
     // Update target user profile to remove clan info
     await removeClanInfoFromUserProfile(db, targetUserId);
+    
+    // Send real-time notification to the kicked user
+    await sendClanNotification(db, targetUserId, "kicked_from_clan", {
+      clanName: clanData.clanName,
+      clanBadge: clanData.clanBadge,
+      kickedBy: (adminMember && adminMember.username) || userId,
+      kickedByRole: (adminMember && adminMember.role) || CLAN_ROLES.LEADER,
+      timestamp: new Date().toISOString(),
+      message: `You have been kicked from ${clanData.clanName}`,
+    });
     
     return {
       success: true,
@@ -5599,12 +5667,9 @@ exports.getUserClanDetails = functions.https.onCall(async (data, context) => {
         
         // Reload the profile
         const updatedProfile = await getUserProfile(db, userId);
-        const clanId = updatedProfile.data.clanId;
-        const clan = {
-          doc: clansDoc,
-          id: userId,
-          data: ownedClanData
-        };
+        // Update userProfile reference to continue with normal flow
+        userProfile.data = updatedProfile.data;
+        userProfile.ref = updatedProfile.ref;
       } else {
         // User doesn't own a clan, but they might be a member of someone else's clan
         // Search all clans to find if user is a member
