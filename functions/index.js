@@ -6421,3 +6421,115 @@ exports.getBookmarks = functions.https.onCall(async (data, context) => {
     );
   }
 });
+
+/**
+ * Auth Check Function - Test authentication status
+ * This function checks if the user calling it is authenticated and logs the details
+ * 
+ * @param {Object} data - Request data
+ * @param {string} data.userId - Optional user ID for testing
+ * @returns {Object} - Response with authentication status
+ */
+exports.AuthCheckFunction = functions.https.onCall(async (data, context) => {
+  const timestamp = new Date().toISOString();
+  
+  console.log(`=== AuthCheckFunction START === Timestamp: ${timestamp}`);
+  console.log(`Context object exists: ${!!context}`);
+  console.log(`Context keys:`, context ? Object.keys(context) : "null");
+  console.log(`Context.auth exists: ${!!(context && context.auth)}`);
+  console.log(`Context.auth value:`, context && context.auth);
+  
+  // In 2nd gen functions, auth is in data.auth, not context.auth
+  console.log(`Data object keys:`, data ? Object.keys(data) : "null");
+  console.log(`Data.auth exists: ${!!(data && data.auth)}`);
+  console.log(`Data.auth value:`, data && data.auth);
+  
+  // Log raw request to see where auth might be
+  if (data && data.rawRequest) {
+    console.log(`Raw request headers available: ${!!data.rawRequest.headers}`);
+    if (data.rawRequest.headers) {
+      console.log(`Authorization header exists: ${!!data.rawRequest.headers.authorization}`);
+    }
+  }
+  
+  // Check authentication context - try both locations
+  const authContext = (data && data.auth) || (context && context.auth);
+  
+  if (authContext && authContext.uid) {
+    console.log("✅ USER IS AUTHENTICATED");
+    console.log(`Auth UID: ${authContext.uid}`);
+    console.log(`Auth Token:`, {
+      issuer: authContext.token.iss || "not available",
+      audience: authContext.token.aud || "not available",
+      subject: authContext.token.sub || "not available",
+      email: authContext.token.email || "not available",
+      emailVerified: authContext.token.email_verified || false,
+      authTime: authContext.token.auth_time || "not available",
+      issuedAt: authContext.token.iat || "not available",
+      expiresAt: authContext.token.exp || "not available"
+    });
+    
+    // Log additional auth properties if available
+    if (authContext.token.firebase) {
+      console.log("Firebase Auth Details:", {
+        provider: authContext.token.firebase.sign_in_provider || "unknown",
+        identities: authContext.token.firebase.identities || {}
+      });
+    }
+    
+    return {
+      success: true,
+      authenticated: true,
+      userId: authContext.uid,
+      message: "User is successfully authenticated",
+      authDetails: {
+        uid: authContext.uid,
+        email: authContext.token.email || null,
+        emailVerified: authContext.token.email_verified || false,
+        provider: (authContext.token.firebase && authContext.token.firebase.sign_in_provider) || "unknown",
+        authTime: authContext.token.auth_time || null,
+        issuedAt: authContext.token.iat || null,
+        expiresAt: authContext.token.exp || null
+      }
+    };
+  } else {
+    console.log("❌ USER IS NOT AUTHENTICATED");
+    console.log("Auth context is null or undefined");
+    
+    // Safely log request data without circular references
+    try {
+      const actualData = (data && data.data) || data;
+      const safeData = {
+        hasData: !!data,
+        dataKeys: data ? Object.keys(data) : [],
+        actualDataKeys: actualData ? Object.keys(actualData) : []
+      };
+      console.log("Request data (safe):", JSON.stringify(safeData, null, 2));
+      
+      // Check if userId was passed in data for testing purposes
+      if (actualData && actualData.userId) {
+        console.log(`⚠️ UserId provided in request data: ${actualData.userId}`);
+        console.log("This suggests the client is trying to authenticate with a userId parameter");
+      }
+      
+      return {
+        success: true,
+        authenticated: false,
+        userId: null,
+        message: "User is not authenticated - no auth context available",
+        authDetails: null,
+        requestData: actualData || null
+      };
+    } catch (error) {
+      console.error("Error logging request data:", error.message);
+      return {
+        success: true,
+        authenticated: false,
+        userId: null,
+        message: "User is not authenticated - no auth context available",
+        authDetails: null,
+        requestData: null
+      };
+    }
+  }
+});
