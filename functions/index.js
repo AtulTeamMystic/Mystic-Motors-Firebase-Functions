@@ -801,8 +801,8 @@ exports.activateBooster = functions.https.onCall(async (data, context) => {
   // Log incoming data for debugging
   console.log("activateBooster - Raw incoming data keys:", 
       data ? Object.keys(data) : "null");
-  console.log("activateBooster - Processed actualData:",
-      JSON.stringify(actualData));
+  console.log("activateBooster - Processed actualData keys:",
+      actualData ? Object.keys(actualData) : "null");
   console.log("activateBooster - Auth context:",
               context.auth ? `UID: ${context.auth.uid}` : "No auth");
 
@@ -841,7 +841,7 @@ exports.activateBooster = functions.https.onCall(async (data, context) => {
     }
 
     const boosterData = JSON.parse(userBoosterDoc.data().boosterData);
-    console.log("Current booster data:", JSON.stringify(boosterData));
+    console.log("Current booster data keys:", boosterData ? Object.keys(boosterData) : "null");
 
     // Check if user has this booster
     const currentCount = boosterData[boosterType] || 0;
@@ -2656,6 +2656,49 @@ async function removeClanInfoFromUserProfile(db, userId) {
 }
 
 /**
+ * Sends notifications to ALL members of a clan
+ */
+async function sendClanWideNotification(db, clanData, type, data, excludeUserId = null) {
+  try {
+    if (!clanData || !clanData.members || !Array.isArray(clanData.members)) {
+      console.error("Invalid clan data for clan-wide notification");
+      return;
+    }
+
+    const notificationPromises = [];
+    
+    for (const member of clanData.members) {
+      if (member && member.userId && member.userId !== excludeUserId) {
+        const notificationData = {
+          userId: member.userId,
+          type: type,
+          data: data,
+          timestamp: admin.firestore.FieldValue.serverTimestamp(),
+          read: false,
+          id: Date.now().toString() + "_" + Math.random().toString(36).substr(2, 9)
+        };
+
+        // Add to user's notifications subcollection
+        notificationPromises.push(
+          db.collection("users").doc(member.userId).collection("notifications").add(notificationData)
+        );
+        
+        // Also add to global notifications collection
+        notificationPromises.push(
+          db.collection("notifications").add(notificationData)
+        );
+      }
+    }
+    
+    await Promise.all(notificationPromises);
+    console.log(`Clan-wide notification sent to ${clanData.members.length} members: ${type}`);
+    
+  } catch (error) {
+    console.error("Error sending clan-wide notification:", error);
+  }
+}
+
+/**
  * Send notification to user about clan-related events
  * Creates a notification document that client apps can listen to in real-time
  */
@@ -2667,7 +2710,7 @@ async function sendClanNotification(db, userId, type, data) {
       data: data,
       timestamp: admin.firestore.FieldValue.serverTimestamp(),
       read: false,
-      id: admin.firestore.FieldValue.serverTimestamp().toString() + "_" + Math.random().toString(36).substr(2, 9)
+      id: Date.now().toString() + "_" + Math.random().toString(36).substr(2, 9)
     };
 
     // Add to user's notifications subcollection
@@ -4249,8 +4292,30 @@ exports.promoteMember = functions.https.onCall(async (data, context) => {
       console.log(`User ${userId} already confirmed to be in a clan, skipping ownership check`);
     }
     
+    // EMERGENCY SEARCH: Search ALL clans as last resort
+    if (!isUserInAnyClan) {
+      console.log(`🚨 EMERGENCY SEARCH: Searching ALL clans for user ${userId}...`);
+      const allClansSnapshot = await db.collection("clans").get();
+      
+      for (const clanDoc of allClansSnapshot.docs) {
+        const clanData = clanDoc.data();
+        if (clanData.members && Array.isArray(clanData.members)) {
+          const memberData = clanData.members.find(m => m && m.userId === userId);
+          
+          if (memberData) {
+            console.log(`✅ EMERGENCY FOUND! User ${userId} in clan ${clanData.clanId} with role ${memberData.role}`);
+            isUserInAnyClan = true;
+            userCurrentClanId = clanData.clanId;
+            userClanRole = memberData.role;
+            break;
+          }
+        }
+      }
+    }
+    
     // Final check: if user is not in any clan, reject the request
     if (!isUserInAnyClan) {
+      console.log(`❌ User ${userId} not found in any clan after emergency search`);
       throw new functions.https.HttpsError(
           "failed-precondition",
           "You are not a member of any clan."
@@ -4259,11 +4324,11 @@ exports.promoteMember = functions.https.onCall(async (data, context) => {
     
     console.log(`User ${userId} confirmed to be in clan ${userCurrentClanId} with role ${userClanRole}`);
     
-    // Check if user has permission to promote (only leaders can promote)
-    if (userClanRole !== CLAN_ROLES.LEADER) {
+    // Check if user has permission to promote (leaders AND co-leaders can promote)
+    if (userClanRole !== CLAN_ROLES.LEADER && userClanRole !== CLAN_ROLES.CO_LEADER) {
       throw new functions.https.HttpsError(
           "permission-denied",
-          "Only clan leaders can promote members."
+          "Only clan leaders and co-leaders can promote members."
       );
     }
     
@@ -4325,19 +4390,22 @@ exports.promoteMember = functions.https.onCall(async (data, context) => {
     // Update target user profile
     await updateUserProfileWithClanInfo(db, targetUserId, clanId, CLAN_ROLES.CO_LEADER);
     
-    // Get admin member info for notification
+    // Get admin member info and promoted member info for notification
     const adminMember = clanData.members.find(m => m.userId === userId);
+    const promotedMember = clanData.members.find(m => m.userId === targetUserId);
     
-    // Send real-time notification to the promoted user
-    await sendClanNotification(db, targetUserId, "promoted_in_clan", {
+    // Send clan-wide notification about the promotion
+    await sendClanWideNotification(db, clanData, "member_promoted_in_clan", {
       clanName: clanData.clanName,
       clanBadge: clanData.clanBadge,
+      promotedUserId: targetUserId,
+      promotedUsername: (promotedMember && promotedMember.username) || targetUserId,
       promotedBy: (adminMember && adminMember.username) || userId,
       promotedByRole: (adminMember && adminMember.role) || CLAN_ROLES.LEADER,
       oldRole: CLAN_ROLES.MEMBER,
       newRole: CLAN_ROLES.CO_LEADER,
       timestamp: new Date().toISOString(),
-      message: `You have been promoted to Co-Leader in ${clanData.clanName}!`,
+      message: `${(promotedMember && promotedMember.username) || targetUserId} has been promoted to Co-Leader by ${(adminMember && adminMember.username) || userId}!`,
     });
     
     return {
@@ -4470,8 +4538,30 @@ exports.demoteMember = functions.https.onCall(async (data, context) => {
       console.log(`User ${userId} already confirmed to be in a clan, skipping ownership check`);
     }
     
+    // EMERGENCY SEARCH: Search ALL clans as last resort
+    if (!isUserInAnyClan) {
+      console.log(`🚨 EMERGENCY SEARCH: Searching ALL clans for user ${userId}...`);
+      const allClansSnapshot = await db.collection("clans").get();
+      
+      for (const clanDoc of allClansSnapshot.docs) {
+        const clanData = clanDoc.data();
+        if (clanData.members && Array.isArray(clanData.members)) {
+          const memberData = clanData.members.find(m => m && m.userId === userId);
+          
+          if (memberData) {
+            console.log(`✅ EMERGENCY FOUND! User ${userId} in clan ${clanData.clanId} with role ${memberData.role}`);
+            isUserInAnyClan = true;
+            userCurrentClanId = clanData.clanId;
+            userClanRole = memberData.role;
+            break;
+          }
+        }
+      }
+    }
+    
     // Final check: if user is not in any clan, reject the request
     if (!isUserInAnyClan) {
+      console.log(`❌ User ${userId} not found in any clan after emergency search`);
       throw new functions.https.HttpsError(
           "failed-precondition",
           "You are not a member of any clan."
@@ -4480,11 +4570,11 @@ exports.demoteMember = functions.https.onCall(async (data, context) => {
     
     console.log(`User ${userId} confirmed to be in clan ${userCurrentClanId} with role ${userClanRole}`);
     
-    // Check if user has permission to demote (only leaders can demote)
-    if (userClanRole !== CLAN_ROLES.LEADER) {
+    // Check if user has permission to demote (leaders AND co-leaders can demote)
+    if (userClanRole !== CLAN_ROLES.LEADER && userClanRole !== CLAN_ROLES.CO_LEADER) {
       throw new functions.https.HttpsError(
           "permission-denied",
-          "Only clan leaders can demote members."
+          "Only clan leaders and co-leaders can demote members."
       );
     }
     
@@ -4547,19 +4637,22 @@ exports.demoteMember = functions.https.onCall(async (data, context) => {
     // Update target user profile
     await updateUserProfileWithClanInfo(db, targetUserId, clanId, CLAN_ROLES.MEMBER);
     
-    // Get admin member info for notification
+    // Get admin member info and demoted member info for notification
     const adminMember = clanData.members.find(m => m.userId === userId);
+    const demotedMember = clanData.members.find(m => m.userId === targetUserId);
     
-    // Send real-time notification to the demoted user
-    await sendClanNotification(db, targetUserId, "demoted_in_clan", {
+    // Send clan-wide notification about the demotion
+    await sendClanWideNotification(db, clanData, "member_demoted_in_clan", {
       clanName: clanData.clanName,
       clanBadge: clanData.clanBadge,
+      demotedUserId: targetUserId,
+      demotedUsername: (demotedMember && demotedMember.username) || targetUserId,
       demotedBy: (adminMember && adminMember.username) || userId,
       demotedByRole: (adminMember && adminMember.role) || CLAN_ROLES.LEADER,
       oldRole: CLAN_ROLES.CO_LEADER,
       newRole: CLAN_ROLES.MEMBER,
       timestamp: new Date().toISOString(),
-      message: `You have been demoted to Member in ${clanData.clanName}`,
+      message: `${(demotedMember && demotedMember.username) || targetUserId} has been demoted to Member by ${(adminMember && adminMember.username) || userId}`,
     });
     
     return {
@@ -4692,8 +4785,30 @@ exports.kickMember = functions.https.onCall(async (data, context) => {
       console.log(`User ${userId} already confirmed to be in a clan, skipping ownership check`);
     }
     
+    // EMERGENCY SEARCH: Search ALL clans as last resort
+    if (!isUserInAnyClan) {
+      console.log(`🚨 EMERGENCY SEARCH: Searching ALL clans for user ${userId}...`);
+      const allClansSnapshot = await db.collection("clans").get();
+      
+      for (const clanDoc of allClansSnapshot.docs) {
+        const clanData = clanDoc.data();
+        if (clanData.members && Array.isArray(clanData.members)) {
+          const memberData = clanData.members.find(m => m && m.userId === userId);
+          
+          if (memberData) {
+            console.log(`✅ EMERGENCY FOUND! User ${userId} in clan ${clanData.clanId} with role ${memberData.role}`);
+            isUserInAnyClan = true;
+            userCurrentClanId = clanData.clanId;
+            userClanRole = memberData.role;
+            break;
+          }
+        }
+      }
+    }
+    
     // Final check: if user is not in any clan, reject the request
     if (!isUserInAnyClan) {
+      console.log(`❌ User ${userId} not found in any clan after emergency search`);
       throw new functions.https.HttpsError(
           "failed-precondition",
           "You are not a member of any clan."
@@ -4759,7 +4874,10 @@ exports.kickMember = functions.https.onCall(async (data, context) => {
     // Update target user profile to remove clan info
     await removeClanInfoFromUserProfile(db, targetUserId);
     
-    // Send real-time notification to the kicked user
+    // Get member info for notifications
+    const kickedMember = clanData.members.find(m => m.userId === targetUserId);
+    
+    // Send notification to the kicked user specifically
     await sendClanNotification(db, targetUserId, "kicked_from_clan", {
       clanName: clanData.clanName,
       clanBadge: clanData.clanBadge,
@@ -4768,6 +4886,18 @@ exports.kickMember = functions.https.onCall(async (data, context) => {
       timestamp: new Date().toISOString(),
       message: `You have been kicked from ${clanData.clanName}`,
     });
+    
+    // Send clan-wide notification to remaining members (excluding kicked user)
+    await sendClanWideNotification(db, clanData, "member_kicked_from_clan", {
+      clanName: clanData.clanName,
+      clanBadge: clanData.clanBadge,
+      kickedUserId: targetUserId,
+      kickedUsername: (kickedMember && kickedMember.username) || targetUserId,
+      kickedBy: (adminMember && adminMember.username) || userId,
+      kickedByRole: (adminMember && adminMember.role) || CLAN_ROLES.LEADER,
+      timestamp: new Date().toISOString(),
+      message: `${(kickedMember && kickedMember.username) || targetUserId} has been kicked from the clan by ${(adminMember && adminMember.username) || userId}`,
+    }, targetUserId); // Exclude the kicked user from clan-wide notification
     
     return {
       success: true,
